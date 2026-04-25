@@ -39,15 +39,20 @@ Object.assign(App.prototype, {
                     <div style="font-size: 3rem; filter: drop-shadow(0 0 10px rgba(74, 144, 226, 0.3)); cursor: pointer;" onclick="window.gameApp.showScreen('avatar-select')" title="Ändra avatar">${this.state.avatar?.icon || ''}</div>
                     <div class="hud-text" style="text-align: left;">
                         <div class="hud-name" style="cursor: pointer;" onclick="window.gameApp.showScreen('user-select')" title="Byt person">${this.state.user?.name || ''}</div>
-                        <div class="hud-level" style="cursor: pointer;" onclick="window.gameApp.showScreen('difficulty-select')" title="Ändra nivå">NIVÅ ${this.state.difficulty + 3}</div>
+                        <div class="hud-level" style="cursor: pointer; color: #95A5A6; font-size: 0.9rem;" onclick="window.gameApp.showScreen('difficulty-select')" title="Ändra svårighet">
+                            Svårighet: ${CONFIG.difficulties.find(d => d.id === this.state.difficulty)?.name || this.state.difficulty}
+                        </div>
                     </div>
                 </div>
-                <div class="hud-right">
+                <div class="hud-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
                     <div class="hud-stats" style="cursor: pointer; transition: transform 0.2s;" onclick="window.gameApp.showScreen('shop')" title="Gå till butiken" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                         <span style="font-size: 1.2rem;">⭐</span>
                         <span style="font-weight: bold; color: #F1C40F;">${this.state.score}</span>
                     </div>
-                    <div class="hud-progress">${this.progressCount} / ${this.config.targetProgress || 20}</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="color: #2ECC71; font-weight: bold; font-size: 1rem;">NIVÅ ${this.state.level || 1}</div>
+                        <div class="hud-progress" style="margin-top: 0;">${this.progressCount} / ${this.config.targetProgress || 20}</div>
+                    </div>
                 </div>
             </div>
         `;
