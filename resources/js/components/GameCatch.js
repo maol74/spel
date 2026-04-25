@@ -96,6 +96,7 @@ Object.assign(App.prototype, {
         const area = document.getElementById('catch-area');
         if (!area) return;
         
+        const f = document.createElement('div');
         const isHeart = Math.random() < 0.1;
         const fruits = ['🍎', '🍌', '🍐', '🍊', '🍇', '🍓', '🍒', '🍍'];
         const icon = isHeart ? '❤️' : fruits[Math.floor(Math.random() * fruits.length)];

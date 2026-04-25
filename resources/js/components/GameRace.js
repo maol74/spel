@@ -120,6 +120,7 @@ Object.assign(App.prototype, {
         const area = document.getElementById('race-area');
         if (!area) return;
         
+        const t = document.createElement('div');
         const isHeart = Math.random() < 0.1;
         const colors = ['#3498DB', '#2ECC71', '#F1C40F', '#9B59B6', '#E67E22'];
         const color = colors[Math.floor(Math.random() * colors.length)];
