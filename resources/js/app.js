@@ -25,7 +25,7 @@ class App {
                 penguinModes: ['count', 'add', 'sub', 'mult'],
                 feedModes: ['count', 'add', 'sub', 'mult'],
                 dotsModes: ['count', 'add', 'sub', 'mult'],
-                maxResults: { count: 20, add: 10, sub: 10, mult: 20 }
+                maxResults: { count: 50, add: 50, sub: 50, mult: 50 }
             },
             targetProgress: 20
         };

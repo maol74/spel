@@ -1,54 +1,66 @@
 Object.assign(App.prototype, {
-    initMathGame(mode = null) {
+    initMathGame(mode = null, round = 1) {
         this._initializingMath = true;
+        this.mathRound = round;
+        this.mathTotalRounds = 10;
         if (!mode) {
             const enabled = this.config.math.penguinModes || ['count'];
             mode = enabled[Math.floor(Math.random() * enabled.length)];
         }
         this.mathMode = mode;
         const div = this.screens['game-math-penguin'];
-        const count = this.config.math.penguinMaxBase;
+        
+        // Use 3 jumps per round if we have many rounds, or 10 if it's just one round.
+        // The user asked for "10 sub games", so 10 rounds of a few jumps each is good.
+        const jumpsPerRound = 3; 
         this.mathTargets = [];
         const maxRes = (this.config.math.maxResults && this.config.math.maxResults[mode]) || 20;
-        for (let i = 0; i < count; i++) {
+        
+        for (let i = 0; i < jumpsPerRound; i++) {
             let num;
+            let attempts = 0;
             do {
                 num = Math.floor(Math.random() * maxRes) + 1;
-            } while (this.mathTargets.includes(num));
+                attempts++;
+            } while (this.mathTargets.includes(num) && attempts < 50);
             this.mathTargets.push(num);
         }
         this.mathIndex = 0;
         this.currentMathNum = this.mathTargets[0];
-        this.mathMax = Math.max(...this.mathTargets, count + 5);
+        
+        // Create a pool of numbers for icebergs (at least 10 or maxRes)
+        const icebergPool = [];
+        const poolSize = Math.max(10, maxRes);
+        for (let i = 1; i <= poolSize; i++) icebergPool.push(i);
         
         const icebergs = [];
-        for (let i = 1; i <= this.mathMax; i++) {
+        for (let i = 0; i < poolSize; i++) {
+            const num = icebergPool[i];
             let x, y;
             let overlapping;
             let attempts = 0;
             do {
                 overlapping = false;
                 x = 5 + (Math.random() * 85);
-                y = 10 + (Math.random() * 75);
+                y = 15 + (Math.random() * 70);
                 for (let existing of icebergs) {
                     const dx = existing.x - x;
                     const dy = existing.y - y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 10) { // roughly 10% distance threshold
-                        overlapping = true;
-                        break;
-                    }
+                    if (dist < 12) { overlapping = true; break; }
                 }
                 attempts++;
             } while (overlapping && attempts < 50);
-
-            icebergs.push({ num: i, x: x, y: y });
+            icebergs.push({ num: num, x: x, y: y });
         }
 
         const modeTitles = { 'count': 'Räkna', 'add': 'Plus (+)', 'sub': 'Minus (-)', 'mult': 'Gånger (x)' };
         div.innerHTML = `
             ${this.getHUD()}
             <div class="game-card" style="background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%); min-height: 520px;">
+                <div style="position: absolute; top: 20px; right: 40px; background: white; padding: 8px 15px; border-radius: 15px; color: #1565C0; font-weight: bold; border: 2px solid #90CAF9; z-index: 20;">
+                    RUNDA: ${this.mathRound} / ${this.mathTotalRounds}
+                </div>
                 <h2 style="color: #1565C0; margin-bottom: 5px;">Pingvinhopp: ${modeTitles[mode]} 🐧</h2>
                 <div id="math-problem-box" style="background: white; padding: 10px 20px; border-radius: 20px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 10px;">
                     <p style="color: #1565C0; font-weight: bold; font-size: 1.2rem; margin:0;">Hitta svaret på: <span id="math-target-text" style="font-size: 2.2rem; color: #E91E63;">...</span></p>
@@ -65,6 +77,7 @@ Object.assign(App.prototype, {
                         </div>
                     `).join('')}
                 </div>
+                <div style="margin-top: 15px;"><button class="menu-card" style="width: auto; padding: 10px 30px;" onclick="window.gameApp.showScreen('penguin-menu')">Tillbaka</button></div>
             </div>
         `;
         icebergs.forEach(ice => {
@@ -116,10 +129,16 @@ Object.assign(App.prototype, {
                 penguin.style.left = '85%';
                 penguin.style.top = '10%';
                 setTimeout(() => {
-                    this.showToast('BRA RÄKNAT! 🐟🐧');
+                    this.showToast('RÄTT SVARAT! 🐟🐧');
                     this.addScore(5 * m);
                     this.incrementProgress();
-                    setTimeout(() => this.showScreen('penguin-menu'), 3000);
+                    
+                    if (this.mathRound < this.mathTotalRounds) {
+                        setTimeout(() => this.initMathGame(this.mathMode, this.mathRound + 1), 1500);
+                    } else {
+                        this.showToast('MAGISKT! Du klarade alla 10 banor! 🏆🎉');
+                        setTimeout(() => this.showScreen('penguin-menu'), 3000);
+                    }
                 }, 600);
             } else {
                 this.currentMathNum = this.mathTargets[this.mathIndex];
