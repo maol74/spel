@@ -67,6 +67,13 @@ Object.assign(App.prototype, {
                             <label style="display: block; color: #fff; margin-bottom: 5px;">Antal spel för nivå:</label>
                             <input type="number" value="${conf.targetProgress}" onchange="window.gameApp.updateTempConfig('targetProgress', null, this.value)" style="width: 100%; padding: 12px; border-radius: 10px; background: #2D3748; border: none; color: #fff;">
                         </div>
+                        <div style="grid-column: 1 / -1; margin-top: 10px; padding-top: 20px; border-top: 1px solid #2D3748;">
+                            <label style="display: block; color: #E74C3C; margin-bottom: 10px; font-weight: bold;">Farlig zon</label>
+                            <button onclick="window.gameApp.resetAllData()" style="padding: 10px 20px; border-radius: 10px; background: #E74C3C; color: white; border: none; cursor: pointer; font-weight: bold;">
+                                ⚠️ Nollställ alla poäng och köp
+                            </button>
+                            <p style="color: #A0AEC0; font-size: 0.8rem; margin-top: 5px;">Detta tar bort alla stjärnor, återställer nivån till 1, och låser alla spel och avatars igen.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -219,6 +226,23 @@ Object.assign(App.prototype, {
     resetConfig() {
         if (confirm('Är du säker på att du vill återställa alla inställningar?')) {
             localStorage.removeItem('spelGrabbarnaConfig');
+            location.reload();
+        }
+    },
+
+    resetAllData() {
+        if (confirm('⚠️ ÄR DU HELT SÄKER? ⚠️\n\nDetta kommer att ta bort alla stjärnor, låsa alla spel igen, och återställa nivån till 1 för alla användare. Detta går inte att ångra!')) {
+            this.state.score = 0;
+            this.state.level = 1;
+            this.progressCount = 1;
+            this.state.progress = '1 / ' + (this.config.targetProgress || 20);
+            this.state.purchasedItems = [];
+            // Remove avatar since it might be a purchased one
+            this.state.avatar = null; 
+            
+            this.saveState();
+            
+            // Reload page to ensure all UI elements refresh cleanly
             location.reload();
         }
     }
