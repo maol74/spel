@@ -14,7 +14,7 @@ Object.assign(App.prototype, {
         } else {
             targetBase = alphabet[Math.floor(Math.random() * alphabet.length)];
         }
-        const count = this.config.hitta.targetCount;
+        const count = Math.floor(Math.random() * 4) + 2; // Slumpa mellan 2 och 5
         this.lettersToFind = count;
         div.innerHTML = `
             ${this.getHUD()}
