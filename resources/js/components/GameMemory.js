@@ -1,13 +1,20 @@
-Object.assign(App.prototype, {
-    initGameMemory() {
+    initGameMemory(size = 4) {
+        this.memoryGridSize = size;
         const div = this.screens['game-memory'];
         div.innerHTML = `
             ${this.getHUD()}
-            <div id="memory-container" style="position: relative; width: 800px; height: 500px; margin: 0 auto; background: #2D3748; border-radius: 30px; overflow: hidden; border: 5px solid #4A5568; box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+            <div id="memory-container" style="position: relative; width: 800px; height: 600px; margin: 0 auto; background: #2D3748; border-radius: 30px; overflow: hidden; border: 5px solid #4A5568; box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px;">
                 
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="menu-card ${size === 3 ? 'active-orange' : ''}" style="width: auto; padding: 8px 15px; font-size: 1rem;" onclick="window.gameApp.initGameMemory(3)">3x3</button>
+                    <button class="menu-card ${size === 4 ? 'active-orange' : ''}" style="width: auto; padding: 8px 15px; font-size: 1rem;" onclick="window.gameApp.initGameMemory(4)">4x4</button>
+                    <button class="menu-card ${size === 5 ? 'active-orange' : ''}" style="width: auto; padding: 8px 15px; font-size: 1rem;" onclick="window.gameApp.initGameMemory(5)">5x5</button>
+                    <button class="menu-card ${size === 6 ? 'active-orange' : ''}" style="width: auto; padding: 8px 15px; font-size: 1rem;" onclick="window.gameApp.initGameMemory(6)">6x6</button>
+                </div>
+
                 <div id="memory-overlay" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; color: white;">
                     <h1 id="memory-status-text" style="font-size: 3rem; margin-bottom: 20px;">BRA JOBBAT!</h1>
-                    <button class="menu-card" style="width: auto; padding: 15px 40px; font-size: 1.5rem;" onclick="window.gameApp.initGameMemory()">Spela Igen! 🔄</button>
+                    <button class="menu-card" style="width: auto; padding: 15px 40px; font-size: 1.5rem;" onclick="window.gameApp.initGameMemory(${size})">Spela Igen! 🔄</button>
                     <button class="menu-card" style="width: auto; padding: 10px 30px; margin-top: 20px; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('letter-menu')">Tillbaka till menyn 🏠</button>
                 </div>
 
@@ -18,21 +25,17 @@ Object.assign(App.prototype, {
                 </div>
 
                 <div id="memory-grid" style="display: grid; gap: 10px; perspective: 1000px;"></div>
-                
-                <div style="position: absolute; bottom: 20px; left: 20px; color: #A0AEC0; font-weight: bold; font-size: 0.9rem;">
-                    Hitta två likadana bokstäver! 🧠🔤
-                </div>
             </div>
             <style>
                 .memory-card-obj {
-                    width: 80px;
-                    height: 100px;
+                    width: ${size > 4 ? '60px' : '80px'};
+                    height: ${size > 4 ? '80px' : '100px'};
                     background: #4A5568;
                     border-radius: 15px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 2.5rem;
+                    font-size: ${size > 4 ? '1.5rem' : '2.5rem'};
                     color: white;
                     cursor: pointer;
                     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -56,7 +59,7 @@ Object.assign(App.prototype, {
                 }
                 .memory-card-obj .back {
                     background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
-                    font-size: 2.5rem;
+                    font-size: ${size > 4 ? '1.5rem' : '2.5rem'};
                 }
                 .memory-card-obj .front {
                     background: white;
@@ -76,13 +79,13 @@ Object.assign(App.prototype, {
         this.memoryPairsFound = 0;
         this.memoryFlippedCards = [];
         
-        const difficulty = this.state.difficulty; // 1, 2, 3
-        const pairsCount = difficulty === 1 ? 4 : (difficulty === 2 ? 6 : 8);
-        const gridCols = difficulty === 1 ? 4 : 4;
+        const totalCards = size * size;
+        const pairsCount = Math.floor(totalCards / 2);
+        const hasJoker = totalCards % 2 !== 0;
         
         document.getElementById('memory-target').innerText = pairsCount;
         const grid = document.getElementById('memory-grid');
-        grid.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
+        grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".split("");
         let selectedLetters = [];
@@ -92,6 +95,7 @@ Object.assign(App.prototype, {
         }
         
         let cards = [...selectedLetters, ...selectedLetters];
+        if (hasJoker) cards.push('⭐');
         cards.sort(() => Math.random() - 0.5);
         
         grid.innerHTML = cards.map((l, i) => `
