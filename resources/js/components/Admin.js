@@ -33,7 +33,7 @@ Object.assign(App.prototype, {
 
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">⚙️ Admin-inställningar</h1>
+            <h1>⚙️ Admin-inställningar</h1>
             <div class="game-card" style="width: 100%; max-width: 800px; text-align: left; padding: 40px; background: rgba(26, 38, 43, 0.9); margin-bottom: 50px;">
                 <div class="admin-section">
                     <h3 style="color: #4A90E2; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Allmänt</h3>

@@ -137,7 +137,7 @@ Object.assign(App.prototype, {
         const div = this.screens['main-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Hej ${this.state.user ? this.state.user.name : 'där'}!</h1>
+            <h1>Hej ${this.state.user ? this.state.user.name : 'där'}!</h1>
             <div class="menu-grid">
                 <div class="menu-card active-orange" onclick="window.gameApp.showScreen('spel-menu')">
                     <div class="menu-card-icon">🎮</div>
@@ -188,7 +188,7 @@ Object.assign(App.prototype, {
         const div = this.screens['math-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Matte-Äventyret</h1>
+            <h1>Matte-Äventyret</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Välj ett mattespel!</p>
             <div class="menu-grid">
                 <div class="menu-card" style="border-color: #F1C40F" onclick="window.gameApp.showScreen('penguin-menu')">
@@ -229,7 +229,7 @@ Object.assign(App.prototype, {
         
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Pingvinhopp</h1>
+            <h1>Pingvinhopp</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Välj hur du vill räkna!</p>
             <div class="menu-grid">
                 ${allModes.filter(m => enabled.includes(m.id)).map(m => `
@@ -255,7 +255,7 @@ Object.assign(App.prototype, {
 
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Mata Djuren</h1>
+            <h1>Mata Djuren</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Välj hur du vill räkna!</p>
             <div class="menu-grid">
                 ${allModes.filter(m => enabled.includes(m.id)).map(m => `
@@ -281,7 +281,7 @@ Object.assign(App.prototype, {
 
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Prick till Prick</h1>
+            <h1>Prick till Prick</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Välj hur du vill räkna!</p>
             <div class="menu-grid">
                 ${allModes.filter(m => enabled.includes(m.id)).map(m => `
@@ -299,7 +299,7 @@ Object.assign(App.prototype, {
         const div = this.screens['spel-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Roliga Spel 🎮</h1>
+            <h1>Roliga Spel 🎮</h1>
             <div class="menu-grid">
                 <div class="menu-card" style="border-color: #E67E22" onclick="window.gameApp.showScreen('game-adventure')">
                     <div class="menu-card-icon">⚡</div>
@@ -358,7 +358,7 @@ Object.assign(App.prototype, {
         const div = this.screens['letter-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Bokstäver 🔤</h1>
+            <h1>Bokstäver 🔤</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Lär känna alla bokstäver!</p>
             <div class="menu-grid">
                 <div class="menu-card" style="border-color: var(--color-william)" onclick="window.gameApp.showScreen('game-hitta')">
@@ -391,7 +391,7 @@ Object.assign(App.prototype, {
         const div = this.screens['word-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1 style="margin-top: 100px;">Ord & Meningar ✏️</h1>
+            <h1>Ord & Meningar ✏️</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Lär dig bygga ord och meningar!</p>
             <div class="menu-grid">
                 <div class="menu-card" style="border-color: var(--color-liam)" onclick="window.gameApp.showScreen('game-stava')">
