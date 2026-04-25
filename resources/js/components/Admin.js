@@ -34,6 +34,7 @@ Object.assign(App.prototype, {
 
         const tabs = [
             { id: 'allmant', icon: '⚙️', label: 'Allmänt' },
+            { id: 'locks', icon: '🔒', label: 'Spel-lås' },
             { id: 'adventure', icon: '⚡', label: 'Hjälte-Hoppet' },
             { id: 'hitta', icon: '🔍', label: 'Hitta Bokstaven' },
             { id: 'penguin', icon: '🐧', label: 'Pingvinhopp' },
@@ -66,6 +67,30 @@ Object.assign(App.prototype, {
                             <label style="display: block; color: #fff; margin-bottom: 5px;">Antal spel för nivå:</label>
                             <input type="number" value="${conf.targetProgress}" onchange="window.gameApp.updateTempConfig('targetProgress', null, this.value)" style="width: 100%; padding: 12px; border-radius: 10px; background: #2D3748; border: none; color: #fff;">
                         </div>
+                    </div>
+                </div>
+
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'locks' ? 'block' : 'none'};">
+                    <h3 style="color: #E74C3C; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Lås upp Spel (Fusk)</h3>
+                    <p style="color: #A0AEC0; font-size: 0.9rem; margin-bottom: 15px;">Ballongjakten är alltid upplåst. Här kan du manuellt låsa/låsa upp de andra spelen.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                        ${[
+                            { id: 'game-adventure', icon: '⚡', title: 'Hjälte-Hoppet' },
+                            { id: 'game-catch', icon: '🍎', title: 'Frukt-Frossa' },
+                            { id: 'game-race', icon: '🏎️', title: 'Racer-Robban' },
+                            { id: 'game-whack', icon: '🔨', title: 'Hammar-Hjälten' },
+                            { id: 'game-space', icon: '🚀', title: 'Rymd-Räddaren' },
+                            { id: 'game-bubble', icon: '🔵', title: 'Bubbel-Bus' }
+                        ].map(g => `
+                            <div style="background: #2D3748; padding: 15px; border-radius: 12px; border: 1px solid #4A5568;">
+                                <label style="display: flex; align-items: center; gap: 10px; color: #fff; cursor: pointer; font-weight: bold;">
+                                    <input type="checkbox" ${(this.state.purchasedItems || []).includes(g.id) ? 'checked' : ''} 
+                                           onchange="window.gameApp.toggleGameLock('${g.id}')"
+                                           style="width: 20px; height: 20px;">
+                                    ${g.icon} ${g.title}
+                                </label>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
 
@@ -146,6 +171,18 @@ Object.assign(App.prototype, {
 
     switchAdminTab(tabId) {
         this.adminCurrentTab = tabId;
+        this.updateAdminScreen();
+    },
+
+    toggleGameLock(id) {
+        if (!this.state.purchasedItems) this.state.purchasedItems = [];
+        const idx = this.state.purchasedItems.indexOf(id);
+        if (idx > -1) {
+            this.state.purchasedItems.splice(idx, 1); // Lock it
+        } else {
+            this.state.purchasedItems.push(id); // Unlock it
+        }
+        this.saveState();
         this.updateAdminScreen();
     },
 
