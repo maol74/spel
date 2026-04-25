@@ -9,10 +9,11 @@ Object.assign(App.prototype, {
         const div = this.screens['game-math-penguin'];
         const count = this.config.math.penguinMaxBase;
         this.mathTargets = [];
+        const maxRes = (this.config.math.maxResults && this.config.math.maxResults[mode]) || 20;
         for (let i = 0; i < count; i++) {
             let num;
             do {
-                num = Math.floor(Math.random() * 20) + 1;
+                num = Math.floor(Math.random() * maxRes) + 1;
             } while (this.mathTargets.includes(num));
             this.mathTargets.push(num);
         }
@@ -118,24 +119,31 @@ Object.assign(App.prototype, {
             mode = enabled[Math.floor(Math.random() * enabled.length)];
         }
         this.feedMode = mode;
-        let target, problemText;
+        const maxRes = (this.config.math.maxResults && this.config.math.maxResults[mode]) || 10;
         if (mode === 'add') {
-            const x = Math.floor(Math.random() * 10) + 1;
-            const y = Math.floor(Math.random() * 10) + 1;
-            target = x + y;
+            target = Math.floor(Math.random() * (maxRes - 1)) + 2; // Min result 2
+            const x = Math.floor(Math.random() * (target - 1)) + 1;
+            const y = target - x;
             problemText = `${x} + ${y}`;
         } else if (mode === 'sub') {
-            const y = Math.floor(Math.random() * 10) + 1;
-            const x = Math.floor(Math.random() * 10) + y;
-            target = x - y;
+            const y = Math.floor(Math.random() * 9) + 1;
+            target = Math.floor(Math.random() * maxRes) + 1;
+            const x = target + y;
             problemText = `${x} - ${y}`;
         } else if (mode === 'mult') {
-            const x = Math.floor(Math.random() * 5) + 1;
-            const y = Math.floor(Math.random() * 4) + 1;
-            target = x * y;
-            problemText = `${x} × ${y}`;
+            // Find possible multiplications where result <= maxRes
+            let pairs = [];
+            for (let i = 1; i <= 10; i++) {
+                for (let j = 1; j <= 10; j++) {
+                    if (i * j <= maxRes) pairs.push([i, j]);
+                }
+            }
+            if (pairs.length === 0) pairs = [[1, 1]];
+            const pair = pairs[Math.floor(Math.random() * pairs.length)];
+            target = pair[0] * pair[1];
+            problemText = `${pair[0]} × ${pair[1]}`;
         } else {
-            target = Math.floor(Math.random() * 15) + 2;
+            target = Math.floor(Math.random() * maxRes) + 2;
             problemText = target.toString();
         }
         const animals = ['🐒', '🐘', '🦒', '🦓', '🐼', '🦁'];
@@ -237,12 +245,26 @@ Object.assign(App.prototype, {
         }
         this.dotsMode = mode;
 
+        const maxRes = (this.config.math.maxResults && this.config.math.maxResults[mode]) || 20;
         const availableValues = [];
-        for (let i = 1; i <= pattern.points.length + 20; i++) availableValues.push(i);
+        const limit = Math.max(maxRes, pattern.points.length + 5);
+        for (let i = 1; i <= limit; i++) availableValues.push(i);
+        
+        // Ensure we have enough small numbers if maxRes is low
+        const pool = availableValues.filter(v => v <= maxRes);
+        const backupPool = availableValues.filter(v => v > maxRes);
+        
         this.dotValues = [];
         for (let i = 0; i < pattern.points.length; i++) {
-            const idx = Math.floor(Math.random() * availableValues.length);
-            this.dotValues.push(availableValues.splice(idx, 1)[0]);
+            let val;
+            if (pool.length > 0) {
+                const idx = Math.floor(Math.random() * pool.length);
+                val = pool.splice(idx, 1)[0];
+            } else {
+                const idx = Math.floor(Math.random() * backupPool.length);
+                val = backupPool.splice(idx, 1)[0];
+            }
+            this.dotValues.push(val);
         }
 
         const distractors = [];
@@ -252,7 +274,7 @@ Object.assign(App.prototype, {
             const tooClose = pattern.points.some(p => Math.sqrt(Math.pow(p[0]-dx, 2) + Math.pow(p[1]-dy, 2)) < 40);
             if (!tooClose) {
                 let num;
-                do { num = Math.floor(Math.random() * (pattern.points.length + 20)) + 1; } while (this.dotValues.includes(num));
+                do { num = Math.floor(Math.random() * maxRes) + 1; } while (this.dotValues.includes(num));
                 distractors.push({ x: dx, y: dy, num });
             }
         }

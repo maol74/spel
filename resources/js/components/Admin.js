@@ -5,19 +5,29 @@ Object.assign(App.prototype, {
         
         const renderModeCheckboxes = (gameKey, modesKey) => {
             const allModes = [
-                { id: 'count', label: 'Räkna' },
-                { id: 'add', label: 'Plus (+)' },
-                { id: 'sub', label: 'Minus (-)' },
-                { id: 'mult', label: 'Gånger (×)' }
+                { id: 'count', label: 'Räkna', icon: '🔢' },
+                { id: 'add', label: 'Plus (+)', icon: '➕' },
+                { id: 'sub', label: 'Minus (-)', icon: '➖' },
+                { id: 'mult', label: 'Gånger (×)', icon: '✖️' }
             ];
             const currentModes = (conf.math && conf.math[modesKey]) || [];
+            const maxVals = conf.math.maxResults || { count: 20, add: 10, sub: 10, mult: 20 };
+            
             return allModes.map(m => `
-                <label style="display: flex; align-items: center; gap: 10px; color: #fff; cursor: pointer; background: #2D3748; padding: 10px; border-radius: 8px;">
-                    <input type="checkbox" ${currentModes.includes(m.id) ? 'checked' : ''} 
-                           onchange="window.gameApp.toggleAdminMode('${modesKey}', '${m.id}')"
-                           style="width: 20px; height: 20px;">
-                    ${m.label}
-                </label>
+                <div style="display: flex; flex-direction: column; gap: 5px; background: #2D3748; padding: 15px; border-radius: 12px; border: 1px solid #4A5568;">
+                    <label style="display: flex; align-items: center; gap: 10px; color: #fff; cursor: pointer; font-weight: bold; margin-bottom: 8px;">
+                        <input type="checkbox" ${currentModes.includes(m.id) ? 'checked' : ''} 
+                               onchange="window.gameApp.toggleAdminMode('${modesKey}', '${m.id}')"
+                               style="width: 20px; height: 20px;">
+                        ${m.icon} ${m.label}
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #A0AEC0; font-size: 0.8rem;">Max svar:</span>
+                        <input type="number" value="${maxVals[m.id]}" 
+                               onchange="window.gameApp.updateMathMax('${m.id}', this.value)"
+                               style="width: 60px; padding: 5px 8px; border-radius: 6px; background: #1A202C; border: 1px solid #4A5568; color: #fff; font-size: 0.9rem;">
+                    </div>
+                </div>
             `).join('');
         };
 
@@ -126,6 +136,14 @@ Object.assign(App.prototype, {
         const idx = modes.indexOf(modeId);
         if (idx > -1) { modes.splice(idx, 1); } 
         else { modes.push(modeId); }
+        this.updateAdminScreen();
+    },
+
+    updateMathMax(modeId, value) {
+        if (!this.tempConfig.math.maxResults) {
+            this.tempConfig.math.maxResults = { count: 20, add: 10, sub: 10, mult: 20 };
+        }
+        this.tempConfig.math.maxResults[modeId] = parseInt(value) || 10;
         this.updateAdminScreen();
     },
 

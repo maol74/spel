@@ -23,7 +23,8 @@ class App {
                 feedScore: 30,
                 penguinModes: ['count', 'add', 'sub', 'mult'],
                 feedModes: ['count', 'add', 'sub', 'mult'],
-                dotsModes: ['count', 'add', 'sub', 'mult']
+                dotsModes: ['count', 'add', 'sub', 'mult'],
+                maxResults: { count: 20, add: 10, sub: 10, mult: 20 }
             },
             targetProgress: 20
         };
