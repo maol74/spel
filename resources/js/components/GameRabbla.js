@@ -14,18 +14,18 @@ Object.assign(App.prototype, {
                     ?
                 </div>
 
-                <div id="rabbla-controls" style="position: absolute; bottom: 40px; display: flex; gap: 20px; align-items: center;">
+                <div id="rabbla-controls" style="position: absolute; bottom: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; width: 100%;">
                     <div style="display: flex; flex-direction: column; gap: 5px;">
-                        <button class="menu-card" style="width: 60px; height: 50px; padding: 0; font-size: 1.5rem;" onclick="window.gameApp.changeRabblaSpeed(-200)" title="Snabbare">⬆️</button>
-                        <button class="menu-card" style="width: 60px; height: 50px; padding: 0; font-size: 1.5rem;" onclick="window.gameApp.changeRabblaSpeed(200)" title="Långsammare">⬇️</button>
+                        <button style="width: 45px; height: 45px; padding: 0; font-size: 1.5rem; background: #2D3748; color: white; border: 2px solid #4A5568; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.gameApp.changeRabblaSpeed(-200)" title="Snabbare">⬆️</button>
+                        <button style="width: 45px; height: 45px; padding: 0; font-size: 1.5rem; background: #2D3748; color: white; border: 2px solid #4A5568; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.gameApp.changeRabblaSpeed(200)" title="Långsammare">⬇️</button>
                     </div>
                     
-                    <div style="background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 15px; color: white; border: 1px solid #2ECC71;">
-                        TAKT: <span id="rabbla-speed-text">1.6</span>s
+                    <div style="background: rgba(0,0,0,0.5); padding: 15px 25px; border-radius: 15px; color: white; border: 2px solid #2ECC71; font-size: 1.2rem; font-weight: bold; display: flex; align-items: center;">
+                        TAKT: <span id="rabbla-speed-text" style="margin-left: 5px;">1.6</span>s
                     </div>
 
-                    <button id="rabbla-toggle" class="menu-card" style="width: auto; padding: 10px 40px; background: #E74C3C; border-color: #C0392B;" onclick="window.gameApp.toggleRabbla()">Stoppa 🛑</button>
-                    <button class="menu-card" style="width: auto; padding: 10px 40px; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('letter-menu')">Tillbaka 🏠</button>
+                    <button id="rabbla-toggle" class="menu-card" style="width: auto; padding: 15px 30px; background: #E74C3C; border-color: #C0392B; margin: 0; font-size: 1.2rem;" onclick="window.gameApp.toggleRabbla()">Stoppa 🛑</button>
+                    <button class="menu-card" style="width: auto; padding: 15px 30px; background: #718096; border-color: #4A5568; margin: 0; font-size: 1.2rem;" onclick="window.gameApp.showScreen('letter-menu')">Tillbaka 🏠</button>
                 </div>
 
             </div>
