@@ -305,59 +305,48 @@ Object.assign(App.prototype, {
 
     updateSpelMenuScreen() {
         const div = this.screens['spel-menu'];
+        const games = [
+            { id: 'game-pop', icon: '🎈', title: 'Ballongjakten', subtitle: 'Smäll alla ballonger!', color: '#FF6B6B', price: 0 },
+            { id: 'game-adventure', icon: '⚡', title: 'Hjälte-Hoppet', subtitle: 'Hoppa & Skjut!', color: '#E67E22', price: 50 },
+            { id: 'game-catch', icon: '🍎', title: 'Frukt-Frossa', subtitle: 'Fånga all frukt!', color: '#2ECC71', price: 100 },
+            { id: 'game-race', icon: '🏎️', title: 'Racer-Robban', subtitle: 'Kör så det ryker!', color: '#3498DB', price: 150 },
+            { id: 'game-whack', icon: '🔨', title: 'Hammar-Hjälten', subtitle: 'Poffa alla monster!', color: '#9B59B6', price: 200 },
+            { id: 'game-space', icon: '🚀', title: 'Rymd-Räddaren', subtitle: 'Skydda jorden!', color: '#F1C40F', price: 250 },
+            { id: 'game-bubble', icon: '🔵', title: 'Bubbel-Bus', subtitle: 'Skjut och matcha!', color: '#3498DB', price: 300 }
+        ];
+
         div.innerHTML = `
             ${this.getHUD()}
             <h1>Roliga Spel 🎮</h1>
+            <p style="color: #CBD5E0; margin-bottom: 2rem;">Lås upp fler spel med dina stjärnor!</p>
             <div class="menu-grid">
-                <div class="menu-card" style="border-color: #E67E22" onclick="window.gameApp.showScreen('game-adventure')">
-                    <div class="menu-card-icon">⚡</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #E67E22">Hjälte-Hoppet</div>
-                        <div class="menu-card-subtitle">Hoppa & Skjut!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #FF6B6B" onclick="window.gameApp.showScreen('game-pop')">
-                    <div class="menu-card-icon">🎈</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #FF6B6B">Ballongjakten</div>
-                        <div class="menu-card-subtitle">Smäll alla ballonger!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #2ECC71" onclick="window.gameApp.showScreen('game-catch')">
-                    <div class="menu-card-icon">🍎</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #2ECC71">Frukt-Frossa</div>
-                        <div class="menu-card-subtitle">Fånga all frukt!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #3498DB" onclick="window.gameApp.showScreen('game-race')">
-                    <div class="menu-card-icon">🏎️</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #3498DB">Racer-Robban</div>
-                        <div class="menu-card-subtitle">Kör så det ryker!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #9B59B6" onclick="window.gameApp.showScreen('game-whack')">
-                    <div class="menu-card-icon">🔨</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #9B59B6">Hammar-Hjälten</div>
-                        <div class="menu-card-subtitle">Poffa alla monster!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #F1C40F" onclick="window.gameApp.showScreen('game-space')">
-                    <div class="menu-card-icon">🚀</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #F1C40F">Rymd-Räddaren</div>
-                        <div class="menu-card-subtitle">Skydda jorden!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #3498DB" onclick="window.gameApp.showScreen('game-bubble')">
-                    <div class="menu-card-icon">🔵</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #3498DB">Bubbel-Bus</div>
-                        <div class="menu-card-subtitle">Skjut och matcha!</div>
-                    </div>
-                </div>
+                ${games.map(g => {
+                    const isUnlocked = g.price === 0 || this.state.purchasedItems.includes(g.id);
+                    if (isUnlocked) {
+                        return `
+                            <div class="menu-card" style="border-color: ${g.color}" onclick="window.gameApp.showScreen('${g.id}')">
+                                <div class="menu-card-icon">${g.icon}</div>
+                                <div class="menu-card-text">
+                                    <div class="menu-card-title" style="color: ${g.color}">${g.title}</div>
+                                    <div class="menu-card-subtitle">${g.subtitle}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="menu-card" style="border-color: #718096; position: relative;" onclick="window.gameApp.buyGame('${g.id}', '${g.title}', ${g.price})">
+                                <div class="menu-card-icon" style="filter: grayscale(100%) opacity(50%);">${g.icon}</div>
+                                <div class="menu-card-text" style="opacity: 0.6;">
+                                    <div class="menu-card-title" style="color: white">${g.title}</div>
+                                    <div class="menu-card-subtitle">Låst 🔒</div>
+                                </div>
+                                <div style="position: absolute; top: -10px; right: -10px; background: #F1C40F; color: black; padding: 5px 10px; border-radius: 15px; font-weight: bold; border: 2px solid white;">
+                                    ${g.price} ⭐
+                                </div>
+                            </div>
+                        `;
+                    }
+                }).join('')}
             </div>
         `;
     },

@@ -66,5 +66,23 @@ Object.assign(App.prototype, {
         } else {
             this.showToast(`Du behöver ${item.price - this.state.score} fler stjärnor! 😢`, 3000);
         }
+    },
+
+    buyGame(id, title, price) {
+        if (this.state.purchasedItems.includes(id)) {
+            return; // Already purchased
+        }
+        
+        if (this.state.score >= price) {
+            this.state.score -= price;
+            this.state.purchasedItems.push(id);
+            this.saveState();
+            this.showToast(`Du låste upp ${title}! 🎉`, 4000);
+            
+            // Re-render spel-menu to unlock the card
+            if (this.updateSpelMenuScreen) this.updateSpelMenuScreen();
+        } else {
+            this.showToast(`Du behöver ${price - this.state.score} fler stjärnor för att låsa upp detta! 😢`, 3000);
+        }
     }
 });
