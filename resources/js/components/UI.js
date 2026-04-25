@@ -39,8 +39,11 @@ Object.assign(App.prototype, {
                     <div style="font-size: 3rem; filter: drop-shadow(0 0 10px rgba(74, 144, 226, 0.3)); cursor: pointer;" onclick="window.gameApp.showScreen('avatar-select')" title="Ändra avatar">${this.state.avatar?.icon || ''}</div>
                     <div class="hud-text" style="text-align: left;">
                         <div class="hud-name" style="cursor: pointer;" onclick="window.gameApp.showScreen('user-select')" title="Byt person">${this.state.user?.name || ''}</div>
-                        <div class="hud-level" style="cursor: pointer; color: #95A5A6; font-size: 0.9rem;" onclick="window.gameApp.showScreen('difficulty-select')" title="Ändra svårighet">
-                            Svårighet: ${CONFIG.difficulties.find(d => d.id === this.state.difficulty)?.name || this.state.difficulty}
+                        <div style="cursor: pointer; display: flex; align-items: center; gap: 5px; margin-top: 2px;" onclick="window.gameApp.showScreen('difficulty-select')" title="Ändra svårighet">
+                            <span style="font-size: 0.9rem;">${CONFIG.difficulties.find(d => d.id === this.state.difficulty)?.icon || '⭐'}</span>
+                            <span style="color: ${CONFIG.difficulties.find(d => d.id === this.state.difficulty)?.color || '#95A5A6'}; font-weight: bold; font-size: 0.85rem;">
+                                ${CONFIG.difficulties.find(d => d.id === this.state.difficulty)?.name || 'Lagom'}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -50,8 +53,8 @@ Object.assign(App.prototype, {
                         <span style="font-weight: bold; color: #F1C40F;">${this.state.score}</span>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <div style="color: #2ECC71; font-weight: bold; font-size: 1rem;">NIVÅ ${this.state.level || 1}</div>
-                        <div class="hud-progress" style="margin-top: 0;">${this.progressCount} / ${this.config.targetProgress || 20}</div>
+                        <div style="color: #2ECC71; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Hjälte-Nivå ${this.state.level || 1}</div>
+                        <div class="hud-progress" style="margin-top: 0; background: rgba(46, 204, 113, 0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">${this.progressCount} / ${this.config.targetProgress || 20}</div>
                     </div>
                 </div>
             </div>
