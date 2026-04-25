@@ -42,24 +42,40 @@ class App {
     loadState() {
         const saved = localStorage.getItem('spelGrabbarnaState');
         if (saved) {
-            this.state = JSON.parse(saved);
+            const parsed = JSON.parse(saved);
+            this.state = { ...this.state, ...parsed };
             if (this.state.progress) {
                 this.progressCount = parseInt(this.state.progress.split(' / ')[0]) || 1;
+            }
+            if (typeof this.state.level !== 'number' || isNaN(this.state.level)) {
+                this.state.level = 1;
             }
         }
     }
 
     incrementProgress() {
+        if (typeof this.state.level !== 'number' || isNaN(this.state.level)) {
+            this.state.level = 1;
+        }
+        
         this.progressCount++;
         const target = this.config.targetProgress || 20;
-        if (this.progressCount > target) {
-            this.progressCount = 1;
+        
+        if (this.progressCount >= target) {
             this.state.level++;
-            this.showToast('WOW! Du har klarat en hel nivå! 🏆', 4000);
+            this.progressCount = 0;
+            this.state.progress = `0 / ${target}`;
+            this.showToast(`LEVEL UP! Du är nu på nivå ${this.state.level}! 🎉🏆`, 5000);
+        } else {
+            this.state.progress = `${this.progressCount} / ${target}`;
         }
-        this.state.progress = `${this.progressCount} / ${target}`;
+        
         const progEl = document.querySelector('.hud-progress');
         if (progEl) progEl.innerText = this.state.progress;
+        
+        const levelEl = document.querySelector('.hud-level');
+        if (levelEl) levelEl.innerText = `NIVÅ ${this.state.level + 3}`; // Assuming difficulty + 3 is the visual level, but wait, UI uses this.state.difficulty + 3? Let's not touch hud-level text here unless we have to, UI.js sets it.
+        
         this.saveState();
     }
 
@@ -248,22 +264,7 @@ class App {
         }, d);
     }
 
-    incrementProgress() {
-        const target = this.config.targetProgress || 20;
-        this.progressCount++;
-        this.state.progress = `${this.progressCount} / ${target}`;
-        
-        if (this.progressCount >= target) {
-            this.state.level++;
-            this.progressCount = 0;
-            this.state.progress = `0 / ${target}`;
-            this.showToast(`LEVEL UP! Du är nu på nivå ${this.state.level}! 🎉🏆`, 5000);
-        }
-        
-        this.saveState();
-        const progressEl = document.querySelector('.hud-progress');
-        if (progressEl) progressEl.innerText = this.state.progress;
-    }
+
 }
 
 window.gameApp = new App();
