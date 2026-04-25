@@ -267,7 +267,7 @@ class App {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 500);
         }, d);
-    },
+    }
 
     addScore(points) {
         if (!points) return;
