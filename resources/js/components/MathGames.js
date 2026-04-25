@@ -63,6 +63,7 @@ Object.assign(App.prototype, {
 
     updateMathProblem() {
         const target = this.currentMathNum;
+        if (target === undefined || target === null) return;
         const mode = this.mathMode;
         let text = target;
         if (mode === 'add') {
@@ -227,14 +228,31 @@ Object.assign(App.prototype, {
         }
     },
 
-    initMathDotsGame(mode = null) {
+    initMathDotsGame(mode = null, round = 1) {
         this._initializingDots = true;
+        this.dotsRound = round;
+        this.dotsTotal = 10;
         const div = this.screens['game-math-dots'];
         const patterns = [
             { name: 'Stjärna', icon: '⭐', points: [[200, 50], [240, 150], [350, 150], [260, 220], [300, 330], [200, 260], [100, 330], [140, 220], [50, 150], [160, 150]] },
             { name: 'Hus', icon: '🏠', points: [[200, 50], [350, 150], [350, 350], [50, 350], [50, 150]] },
             { name: 'Hjärta', icon: '❤️', points: [[200, 120], [260, 50], [340, 50], [380, 120], [380, 200], [200, 380], [20, 200], [20, 120], [60, 50], [140, 50]] },
-            { name: 'Fjäril', icon: '🦋', points: [[200, 200], [350, 50], [380, 200], [350, 350], [200, 250], [50, 350], [20, 200], [50, 50]] }
+            { name: 'Fjäril', icon: '🦋', points: [[200, 200], [350, 50], [380, 200], [350, 350], [200, 250], [50, 350], [20, 200], [50, 50]] },
+            { name: 'Moln', icon: '☁️', points: [[100, 250], [100, 180], [180, 130], [280, 130], [350, 180], [350, 250], [280, 300], [180, 300]] },
+            { name: 'Gran', icon: '🌲', points: [[200, 50], [300, 150], [250, 150], [330, 250], [270, 250], [350, 350], [50, 350], [130, 250], [70, 250], [150, 150], [100, 150]] },
+            { name: 'Båt', icon: '⛵', points: [[100, 250], [350, 250], [300, 350], [150, 350], [100, 250], [220, 250], [220, 50], [100, 230]] },
+            { name: 'Sol', icon: '☀️', points: [[200, 100], [270, 130], [300, 200], [270, 270], [200, 300], [130, 270], [100, 200], [130, 130]] },
+            { name: 'Smile', icon: '😊', points: [[100, 200], [150, 300], [250, 300], [300, 200]] },
+            { name: 'Raket', icon: '🚀', points: [[200, 50], [250, 100], [250, 300], [300, 350], [100, 350], [150, 300], [150, 100]] },
+            { name: 'Blomma', icon: '🌸', points: [[200, 150], [250, 100], [300, 150], [350, 200], [300, 250], [250, 300], [200, 250], [150, 300], [100, 250], [50, 200], [100, 150], [150, 100]] },
+            { name: 'Fisk', icon: '🐟', points: [[350, 200], [300, 150], [150, 150], [50, 200], [150, 250], [300, 250], [350, 300], [350, 100]] },
+            { name: 'Måne', icon: '🌙', points: [[250, 50], [200, 100], [180, 200], [200, 300], [250, 350], [150, 300], [100, 200], [150, 100]] },
+            { name: 'Bil', icon: '🚗', points: [[100, 300], [100, 200], [150, 150], [300, 150], [350, 200], [350, 300], [300, 300], [300, 350], [250, 350], [250, 300], [150, 300], [150, 350], [100, 350]] },
+            { name: 'Lastbil', icon: '🚚', points: [[50, 300], [50, 150], [250, 150], [250, 200], [350, 200], [350, 300], [300, 300], [300, 350], [250, 350], [250, 300], [100, 300], [100, 350], [50, 350]] },
+            { name: 'Fågel', icon: '🐦', points: [[100, 200], [200, 150], [300, 200], [350, 150], [300, 250], [200, 300], [100, 250], [50, 150]] },
+            { name: 'Äpple', icon: '🍎', points: [[200, 100], [250, 120], [300, 180], [300, 280], [250, 340], [200, 320], [150, 340], [100, 280], [100, 180], [150, 120], [200, 100], [200, 50]] },
+            { name: 'Paraply', icon: '🌂', points: [[200, 50], [350, 200], [50, 200], [200, 50], [200, 350], [150, 350]] },
+            { name: 'Present', icon: '🎁', points: [[100, 150], [300, 150], [300, 350], [100, 350], [100, 150], [200, 150], [200, 100], [250, 50], [150, 50], [200, 100]] }
         ];
         const pattern = patterns[Math.floor(Math.random() * patterns.length)];
         this.currentDotsPattern = pattern; 
@@ -282,6 +300,9 @@ Object.assign(App.prototype, {
         div.innerHTML = `
             ${this.getHUD()}
             <div class="game-card" style="background: #E8F5E9; min-height: 580px; text-align: center; position: relative;">
+                <div id="dots-progress" style="position: absolute; top: 20px; right: 40px; background: white; padding: 10px 20px; border-radius: 20px; color: #2E7D32; font-weight: bold; font-size: 1.2rem; border: 2px solid #4CAF50; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    FIGURER: <span id="dots-round-text">${this.dotsRound}</span> / ${this.dotsTotal}
+                </div>
                 <h2 style="color: #2E7D32; margin-top: 10px;">Prick till Prick: ${pattern.name}</h2>
                 <div id="dots-problem-box" style="background: white; padding: 20px 40px; border-radius: 30px; display: inline-block; border: 4px solid #4CAF50;">
                     <p style="color: #2E7D32; font-weight: bold; font-size: 1.4rem; margin:0;">Vad blir det här?</p>
@@ -314,6 +335,11 @@ Object.assign(App.prototype, {
 
     updateDotsProblem() {
         const target = this.dotValues[this.dotsClicked.length];
+        if (target === undefined) {
+            const el = document.getElementById('dots-target-text');
+            if (el) el.innerText = 'KLART! ⭐';
+            return;
+        }
         const mode = this.dotsMode || 'count';
         let text = target;
         if (mode === 'add') {
@@ -357,7 +383,18 @@ Object.assign(App.prototype, {
                 line.setAttribute('x1', this.currentDotsPattern.points[index][0]); line.setAttribute('y1', this.currentDotsPattern.points[index][1]);
                 line.setAttribute('x2', this.currentDotsPattern.points[0][0]); line.setAttribute('y2', this.currentDotsPattern.points[0][1]);
                 line.setAttribute('stroke', '#4CAF50'); line.setAttribute('stroke-width', '6'); svg.appendChild(line);
-                setTimeout(() => { this.showToast('MAGISKT! ❤️'); this.incrementProgress(); setTimeout(() => this.showScreen('dots-menu'), 3000); }, 1000);
+                setTimeout(() => { 
+                    this.showToast('MAGISKT! ❤️'); 
+                    this.incrementProgress();
+                    this.state.score += 30;
+                    this.saveState();
+                    
+                    if (this.dotsRound < this.dotsTotal) {
+                        setTimeout(() => this.initMathDotsGame(this.dotsMode, this.dotsRound + 1), 2000);
+                    } else {
+                        setTimeout(() => this.showScreen('dots-menu'), 2000); 
+                    }
+                }, 1000);
             }
         }
     }
