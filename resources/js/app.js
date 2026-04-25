@@ -8,7 +8,8 @@ class App {
             currentScreen: 'loading-screen',
             score: 100,
             level: 1,
-            progress: '1 / 20'
+            progress: '1 / 20',
+            purchasedItems: []
         };
         this.screens = {};
         this.guessedLetters = [];
@@ -49,6 +50,9 @@ class App {
             }
             if (typeof this.state.level !== 'number' || isNaN(this.state.level)) {
                 this.state.level = 1;
+            }
+            if (!this.state.purchasedItems) {
+                this.state.purchasedItems = [];
             }
         }
     }

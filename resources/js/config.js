@@ -1,11 +1,15 @@
 const CONFIG = {
     avatars: [
-        { id: 'superhero', name: 'Superhjälten', icon: '🦸' },
-        { id: 'dragon', name: 'Draken', icon: '🐲' },
-        { id: 'wizard', name: 'Trollkarlen', icon: '🧙' },
-        { id: 'astronaut', name: 'Astronauten', icon: '👨‍🚀' },
-        { id: 'ninja', name: 'Ninjan', icon: '🥷' },
-        { id: 'robot', name: 'Robot-Robban', icon: '🤖' }
+        { id: 'superhero', name: 'Superhjälten', icon: '🦸', price: 0 },
+        { id: 'dragon', name: 'Draken', icon: '🐲', price: 0 },
+        { id: 'wizard', name: 'Trollkarlen', icon: '🧙', price: 0 },
+        { id: 'astronaut', name: 'Astronauten', icon: '👨‍🚀', price: 0 },
+        { id: 'ninja', name: 'Ninjan', icon: '🥷', price: 0 },
+        { id: 'robot', name: 'Robot-Robban', icon: '🤖', price: 0 },
+        { id: 'king', name: 'Kungen', icon: '👑', price: 500 },
+        { id: 'alien', name: 'Utomjordingen', icon: '👽', price: 1000 },
+        { id: 'ghost', name: 'Spöket', icon: '👻', price: 1500 },
+        { id: 'unicorn', name: 'Enhörningen', icon: '🦄', price: 2000 }
     ],
     difficultyWords: {
         1: ['SOL', 'BIL', 'BUS', 'TÅG', 'KEX', 'IS'],

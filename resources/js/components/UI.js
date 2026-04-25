@@ -25,7 +25,8 @@ Object.assign(App.prototype, {
             'stories': 'main-menu',
             'admin-menu': 'main-menu',
             'avatar-select': 'main-menu',
-            'difficulty-select': 'main-menu'
+            'difficulty-select': 'main-menu',
+            'shop': 'main-menu'
         };
         const backTarget = backMap[cur];
         return `
@@ -42,7 +43,7 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
                 <div class="hud-right">
-                    <div class="hud-stats">
+                    <div class="hud-stats" style="cursor: pointer; transition: transform 0.2s;" onclick="window.gameApp.showScreen('shop')" title="Gå till butiken" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                         <span style="font-size: 1.2rem;">⭐</span>
                         <span style="font-weight: bold; color: #F1C40F;">${this.state.score}</span>
                     </div>
@@ -92,7 +93,7 @@ Object.assign(App.prototype, {
             ${this.getHUD()}
             <h1 style="font-style: italic;">Välj din figur, ${this.state.user?.name}!</h1>
             <div class="avatar-selection-grid">
-                ${CONFIG.avatars.map(a => `
+                ${CONFIG.avatars.filter(a => a.price === 0 || this.state.purchasedItems.includes(a.id)).map(a => `
                     <div class="avatar-option" onclick="window.gameApp.selectAvatar('${a.id}')">
                         <div style="font-size: 3rem;">${a.icon}</div>
                     </div>
@@ -172,6 +173,13 @@ Object.assign(App.prototype, {
                     <div class="menu-card-text">
                         <div class="menu-card-title" style="color: var(--color-story)">Sagor</div>
                         <div class="menu-card-subtitle">Läs spännande berättelser!</div>
+                    </div>
+                </div>
+                <div class="menu-card" style="border-color: #2ECC71" onclick="window.gameApp.showScreen('shop')">
+                    <div class="menu-card-icon">🛒</div>
+                    <div class="menu-card-text">
+                        <div class="menu-card-title" style="color: #2ECC71">Butik</div>
+                        <div class="menu-card-subtitle">Köp nya figurer!</div>
                     </div>
                 </div>
                 <div class="menu-card" style="border-color: #718096" onclick="window.gameApp.showScreen('admin-menu')">
