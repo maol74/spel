@@ -20,7 +20,7 @@ class App {
             stava: { toastDelay: 1500 },
             hitta: { targetCount: 4, randomCount: 20, extraLetters: '' },
             math: { 
-                penguinMaxBase: 5, 
+                penguinMaxBase: 10, 
                 feedScore: 30,
                 penguinModes: ['count', 'add', 'sub', 'mult'],
                 feedModes: ['count', 'add', 'sub', 'mult'],
