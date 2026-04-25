@@ -23,11 +23,26 @@ Object.assign(App.prototype, {
         
         const icebergs = [];
         for (let i = 1; i <= this.mathMax; i++) {
-            icebergs.push({
-                num: i,
-                x: 10 + (Math.random() * 75),
-                y: 15 + (Math.random() * 65)
-            });
+            let x, y;
+            let overlapping;
+            let attempts = 0;
+            do {
+                overlapping = false;
+                x = 5 + (Math.random() * 85);
+                y = 10 + (Math.random() * 75);
+                for (let existing of icebergs) {
+                    const dx = existing.x - x;
+                    const dy = existing.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 10) { // roughly 10% distance threshold
+                        overlapping = true;
+                        break;
+                    }
+                }
+                attempts++;
+            } while (overlapping && attempts < 50);
+
+            icebergs.push({ num: i, x: x, y: y });
         }
 
         const modeTitles = { 'count': 'Räkna', 'add': 'Plus (+)', 'sub': 'Minus (-)', 'mult': 'Gånger (x)' };
