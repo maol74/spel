@@ -21,7 +21,7 @@ Object.assign(App.prototype, {
                     </div>
                     
                     <div style="background: rgba(0,0,0,0.5); padding: 15px 25px; border-radius: 15px; color: white; border: 2px solid #2ECC71; font-size: 1.2rem; font-weight: bold; display: flex; align-items: center;">
-                        TAKT: <span id="rabbla-speed-text" style="margin-left: 5px;">1.6</span>s
+                        TAKT: <span id="rabbla-speed-text" style="margin-left: 5px;">1.8</span>s
                     </div>
 
                     <button id="rabbla-toggle" class="menu-card" style="width: auto; padding: 15px 30px; background: #E74C3C; border-color: #C0392B; margin: 0; font-size: 1.2rem;" onclick="window.gameApp.toggleRabbla()">Stoppa 🛑</button>
@@ -32,7 +32,7 @@ Object.assign(App.prototype, {
         `;
 
         this.rabblaActive = true;
-        this.rabblaSpeed = 1600;
+        this.rabblaSpeed = 1800;
         this.rabblaLetters = "abcdefghijklmnopqrstuvwxyzåäö".split("");
         
         // Keyboard support

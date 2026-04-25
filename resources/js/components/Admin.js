@@ -2,6 +2,7 @@ Object.assign(App.prototype, {
     updateAdminScreen() {
         const div = this.screens['admin-menu'];
         const conf = this.tempConfig || this.config;
+        this.adminCurrentTab = this.adminCurrentTab || 'allmant';
         
         const renderModeCheckboxes = (gameKey, modesKey) => {
             const allModes = [
@@ -31,11 +32,30 @@ Object.assign(App.prototype, {
             `).join('');
         };
 
+        const tabs = [
+            { id: 'allmant', icon: '⚙️', label: 'Allmänt' },
+            { id: 'adventure', icon: '⚡', label: 'Hjälte-Hoppet' },
+            { id: 'hitta', icon: '🔍', label: 'Hitta Bokstaven' },
+            { id: 'penguin', icon: '🐧', label: 'Pingvinhopp' },
+            { id: 'feed', icon: '🐒', label: 'Mata Djuren' },
+            { id: 'dots', icon: '✏️', label: 'Prick till Prick' }
+        ];
+
         div.innerHTML = `
             ${this.getHUD()}
             <h1>⚙️ Admin-inställningar</h1>
             <div class="game-card" style="width: 100%; max-width: 800px; text-align: left; padding: 40px; background: rgba(26, 38, 43, 0.9); margin-bottom: 50px;">
-                <div class="admin-section">
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid #2D3748; padding-bottom: 20px;">
+                    ${tabs.map(t => `
+                        <button style="padding: 10px 15px; border-radius: 10px; background: ${this.adminCurrentTab === t.id ? '#4A90E2' : '#2D3748'}; color: white; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s;"
+                                onclick="window.gameApp.switchAdminTab('${t.id}')">
+                            ${t.icon} ${t.label}
+                        </button>
+                    `).join('')}
+                </div>
+
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'allmant' ? 'block' : 'none'};">
                     <h3 style="color: #4A90E2; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Allmänt</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
                         <div>
@@ -49,8 +69,8 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
 
-                <div class="admin-section">
-                    <h3 style="color: #F1C40F; border-bottom: 1px solid #2D3748; padding-bottom: 10px; margin-top: 30px;">Hjälte-Hoppet (Äventyr)</h3>
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'adventure' ? 'block' : 'none'};">
+                    <h3 style="color: #F1C40F; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Hjälte-Hoppet (Äventyr)</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
                         <div>
                             <label style="display: block; color: #fff; margin-bottom: 5px;">Mål-poäng:</label>
@@ -63,8 +83,8 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
 
-                <div class="admin-section">
-                    <h3 style="color: #2ECC71; border-bottom: 1px solid #2D3748; padding-bottom: 10px; margin-top: 30px;">Hitta Bokstaven</h3>
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'hitta' ? 'block' : 'none'};">
+                    <h3 style="color: #2ECC71; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Hitta Bokstaven</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
                         <div>
                             <label style="display: block; color: #fff; margin-bottom: 5px;">Antal att hitta:</label>
@@ -81,8 +101,8 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
 
-                <div class="admin-section">
-                    <h3 style="color: #E67E22; border-bottom: 1px solid #2D3748; padding-bottom: 10px; margin-top: 30px;">Pingvinhopp (Matte)</h3>
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'penguin' ? 'block' : 'none'};">
+                    <h3 style="color: #E67E22; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Pingvinhopp (Matte)</h3>
                     <div style="margin: 20px 0;">
                         <label style="display: block; color: #fff; margin-bottom: 5px;">Antal hopp:</label>
                         <input type="number" value="${conf.math.penguinMaxBase}" onchange="window.gameApp.updateTempConfig('math', 'penguinMaxBase', this.value)" style="width: 100%; padding: 12px; border-radius: 10px; background: #2D3748; border: none; color: #fff; margin-bottom: 15px;">
@@ -93,8 +113,8 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
 
-                <div class="admin-section">
-                    <h3 style="color: #E91E63; border-bottom: 1px solid #2D3748; padding-bottom: 10px; margin-top: 30px;">Mata Djuren (Matte)</h3>
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'feed' ? 'block' : 'none'};">
+                    <h3 style="color: #E91E63; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Mata Djuren (Matte)</h3>
                     <div style="margin: 20px 0;">
                         <label style="display: block; color: #fff; margin-bottom: 5px;">Poäng vid vinst:</label>
                         <input type="number" value="${conf.math.feedScore}" onchange="window.gameApp.updateTempConfig('math', 'feedScore', this.value)" style="width: 100%; padding: 12px; border-radius: 10px; background: #2D3748; border: none; color: #fff; margin-bottom: 15px;">
@@ -105,8 +125,8 @@ Object.assign(App.prototype, {
                     </div>
                 </div>
 
-                <div class="admin-section">
-                    <h3 style="color: #4CAF50; border-bottom: 1px solid #2D3748; padding-bottom: 10px; margin-top: 30px;">Prick till Prick (Matte)</h3>
+                <div class="admin-section" style="display: ${this.adminCurrentTab === 'dots' ? 'block' : 'none'};">
+                    <h3 style="color: #4CAF50; border-bottom: 1px solid #2D3748; padding-bottom: 10px;">Prick till Prick (Matte)</h3>
                     <div style="margin: 20px 0;">
                         <label style="display: block; color: #fff; margin-bottom: 10px;">Tillåtna räknesätt:</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -122,6 +142,11 @@ Object.assign(App.prototype, {
                 </div>
             </div>
         `;
+    },
+
+    switchAdminTab(tabId) {
+        this.adminCurrentTab = tabId;
+        this.updateAdminScreen();
     },
 
     updateTempConfig(key, subkey, value) {
