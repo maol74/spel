@@ -320,7 +320,7 @@ h1 {
     margin-right: 0.1em;
 }
 
-.story-word:hover {
+.story-word:hover, .story-word.active-word {
     transform: scale(1.3);
     color: #9B59B6; /* Change to story color for better contrast against white */
     background: white;

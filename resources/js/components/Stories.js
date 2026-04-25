@@ -19,11 +19,15 @@ Object.assign(App.prototype, {
     readStory(index) {
         const div = this.screens['stories'];
         const s = CONFIG.stories[index];
+        this.currentStoryWordIndex = -1;
+        const fullText = `${this.state.user?.name} ${s.text}`;
+        const words = fullText.split(' ');
+        
         div.innerHTML = `
             ${this.getHUD()}
             <div class="game-card" style="max-width: 1000px; width: 98%; padding: 2rem;">
                 <div class="story-header" style="width:100%; margin-bottom: 5px;">
-                    <div class="back-link" onclick="window.gameApp.renderStoriesList()">
+                    <div class="back-link" onclick="window.gameApp.exitStory()">
                         <span style="font-size: 1.5rem;">⬅</span> Tillbaka
                     </div>
                 </div>
@@ -31,12 +35,47 @@ Object.assign(App.prototype, {
                 
                 <div class="story-content-text" style="max-height: none; overflow: visible; font-size: 1.1rem; text-align: left;">
                     <img src="${s.img}" style="width: 320px; float: left; margin: 0 25px 15px 0; border-radius: 20px; border: 3px solid var(--color-story); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                    <p style="margin: 0; line-height: 1.6;">
-                        ${(`${this.state.user?.name} ${s.text}`).split(' ').map(word => `<span class="story-word">${word}</span>`).join(' ')}
+                    <p id="story-p" style="margin: 0; line-height: 1.6;">
+                        ${words.map((word, i) => `<span class="story-word" id="word-${i}" onmouseover="window.gameApp.setStoryWordIndex(${i})">${word}</span>`).join(' ')}
                     </p>
                     <div style="font-size: 3rem; margin-top: 15px; clear: both; text-align: center;">${s.icon}</div>
                 </div>
             </div>
         `;
+
+        this._storyKeyHandler = (e) => {
+            if (e.key === 'ArrowRight') this.moveStoryWord(1);
+            if (e.key === 'ArrowLeft') this.moveStoryWord(-1);
+            if (e.key === 'Escape') this.exitStory();
+        };
+        window.addEventListener('keydown', this._storyKeyHandler);
+    },
+
+    setStoryWordIndex(index) {
+        // Clear previous
+        const old = document.querySelector('.story-word.active-word');
+        if (old) old.classList.remove('active-word');
+        
+        this.currentStoryWordIndex = index;
+        const next = document.getElementById(`word-${index}`);
+        if (next) next.classList.add('active-word');
+    },
+
+    moveStoryWord(delta) {
+        const words = document.querySelectorAll('.story-word');
+        let nextIndex = this.currentStoryWordIndex + delta;
+        if (nextIndex < 0) nextIndex = 0;
+        if (nextIndex >= words.length) nextIndex = words.length - 1;
+        
+        this.setStoryWordIndex(nextIndex);
+        
+        // Scroll into view if needed
+        const active = document.getElementById(`word-${nextIndex}`);
+        if (active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    },
+
+    exitStory() {
+        window.removeEventListener('keydown', this._storyKeyHandler);
+        this.renderStoriesList();
     }
 });
