@@ -80,8 +80,10 @@ Object.assign(App.prototype, {
         const monster = holeEl.querySelector('.monster');
         if (!monster) return;
         
+        const isHeart = Math.random() < 0.1;
         const monsters = ['👾', '👽', '👹', '👻', '👺', '🤖'];
-        monster.innerText = monsters[Math.floor(Math.random() * monsters.length)];
+        monster.innerText = isHeart ? '❤️' : monsters[Math.floor(Math.random() * monsters.length)];
+        monster.dataset.type = isHeart ? 'heart' : 'monster';
         
         const currentSpeed = 0.5 + (this.state.difficulty * 0.2) + (this.whackCount * 0.05);
         const speedHud = document.getElementById('whack-speed');
@@ -94,19 +96,33 @@ Object.assign(App.prototype, {
             if (clicked) return;
             clicked = true;
             e.stopPropagation();
-            this.handleWhack(monster);
+            if (monster.dataset.type === 'heart') {
+                if (this.whackLives < 5) {
+                    this.whackLives++;
+                    this.updateWhackLivesDisplay();
+                    this.showToast('EXTRALIV! ❤️');
+                } else {
+                    this.whackCount = Math.min(this.whackCount + 3, 20);
+                    this.showToast('SUPERBONUS! ✨');
+                }
+                monster.style.bottom = '-100%';
+            } else {
+                this.handleWhack(monster);
+            }
         };
         
         const upTime = (2500 / currentSpeed) + (Math.random() * 500);
         setTimeout(() => {
             if (!clicked && this.whackActive) {
-                // Missed one!
-                this.whackLives--;
-                this.updateWhackLivesDisplay();
-                if (this.whackLives <= 0) {
-                    this.showWhackEnd(false);
-                } else {
-                    this.showToast('Hoppsan! Du missade! ❤️');
+                if (monster.dataset.type === 'monster') {
+                    // Missed one!
+                    this.whackLives--;
+                    this.updateWhackLivesDisplay();
+                    if (this.whackLives <= 0) {
+                        this.showWhackEnd(false);
+                    } else {
+                        this.showToast('Hoppsan! Du missade! ❤️');
+                    }
                 }
             }
             monster.style.bottom = '-100%';

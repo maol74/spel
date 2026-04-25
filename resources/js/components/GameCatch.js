@@ -96,11 +96,12 @@ Object.assign(App.prototype, {
         const area = document.getElementById('catch-area');
         if (!area) return;
         
-        const f = document.createElement('div');
+        const isHeart = Math.random() < 0.1;
         const fruits = ['🍎', '🍌', '🍐', '🍊', '🍇', '🍓', '🍒', '🍍'];
-        const fruit = fruits[Math.floor(Math.random() * fruits.length)];
+        const icon = isHeart ? '❤️' : fruits[Math.floor(Math.random() * fruits.length)];
         
-        f.innerText = fruit;
+        f.innerText = icon;
+        if (isHeart) f.dataset.type = 'heart';
         f.style.cssText = `
             position: absolute;
             top: -50px;
@@ -108,7 +109,7 @@ Object.assign(App.prototype, {
             font-size: 3rem;
             user-select: none;
             z-index: 5;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 5px 5px ${isHeart ? 'rgba(231, 76, 60, 0.4)' : 'rgba(0,0,0,0.1)'});
         `;
         
         area.appendChild(f);
@@ -135,18 +136,33 @@ Object.assign(App.prototype, {
             
             if (fRect.bottom > bRect.top + 10 && fRect.top < bRect.bottom && 
                 fRect.right > bRect.left && fRect.left < bRect.right) {
-                this.catchFruit(f);
+                if (f.dataset.type === 'heart') {
+                    if (this.catchLives < 5) {
+                        this.catchLives++;
+                        this.updateCatchLivesDisplay();
+                        this.showToast('EXTRALIV! ❤️');
+                    } else {
+                        this.catchCount = Math.min(this.catchCount + 2, 15);
+                        this.showToast('SUPERBONUS! ✨');
+                    }
+                    f.remove();
+                } else {
+                    this.catchFruit(f);
+                }
                 return;
             }
             
             if (pos > 500) {
+                const wasHeart = f.dataset.type === 'heart';
                 f.remove();
-                this.catchLives--;
-                this.updateCatchLivesDisplay();
-                if (this.catchLives <= 0) {
-                    this.showCatchEnd(false);
-                } else {
-                    this.showToast('Hoppsan! Du tappade en frukt! ❤️');
+                if (!wasHeart) {
+                    this.catchLives--;
+                    this.updateCatchLivesDisplay();
+                    if (this.catchLives <= 0) {
+                        this.showCatchEnd(false);
+                    } else {
+                        this.showToast('Hoppsan! Du tappade en frukt! ❤️');
+                    }
                 }
             } else {
                 requestAnimationFrame(move);

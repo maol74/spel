@@ -165,8 +165,10 @@ Object.assign(App.prototype, {
         
         const a = document.createElement('div');
         a.className = 'alien';
+        const isHeart = Math.random() < 0.1;
         const alienIcons = ['👾', '👽', '🛸', '👹', '💀'];
-        a.innerText = alienIcons[Math.floor(Math.random() * alienIcons.length)];
+        a.innerText = isHeart ? '❤️' : alienIcons[Math.floor(Math.random() * alienIcons.length)];
+        if (isHeart) a.dataset.type = 'heart';
         
         const startX = 30 + Math.random() * 540;
         a.style.left = startX + 'px';
@@ -184,15 +186,45 @@ Object.assign(App.prototype, {
             aPos += speed;
             a.style.top = aPos + 'px';
             a.style.transform = `translateX(${Math.sin(aPos/30) * 15}px)`;
+
+            const aRect = a.getBoundingClientRect();
+            const sRect = ship.getBoundingClientRect();
+            if (aRect.bottom > sRect.top + 10 && aRect.top < sRect.bottom - 10 && 
+                aRect.right > sRect.left + 5 && aRect.left < sRect.right - 5) {
+                if (a.dataset.type === 'heart') {
+                    if (this.spaceLives < 5) {
+                        this.spaceLives++;
+                        this.updateSpaceLivesDisplay();
+                        this.showToast('EXTRALIV! ❤️');
+                    } else {
+                        this.spaceCount = Math.min(this.spaceCount + 3, 30);
+                        this.showToast('SUPERBONUS! 🚀');
+                        const countEl = document.getElementById('space-count');
+                        if (countEl) countEl.innerText = this.spaceCount;
+                    }
+                    a.remove();
+                    return;
+                } else {
+                    this.spaceLives--;
+                    this.updateSpaceLivesDisplay();
+                    this.showToast('KROCK! 💥');
+                    a.remove();
+                    if (this.spaceLives <= 0) this.showSpaceEnd(false);
+                    return;
+                }
+            }
             
             if (aPos > 500) {
+                const wasHeart = a.dataset.type === 'heart';
                 a.remove();
-                this.spaceLives--;
-                this.updateSpaceLivesDisplay();
-                if (this.spaceLives <= 0) {
-                    this.showSpaceEnd(false);
-                } else {
-                    this.showToast('Hoppsan! En utomjording slank förbi! ❤️');
+                if (!wasHeart) {
+                    this.spaceLives--;
+                    this.updateSpaceLivesDisplay();
+                    if (this.spaceLives <= 0) {
+                        this.showSpaceEnd(false);
+                    } else {
+                        this.showToast('Hoppsan! En utomjording slank förbi! ❤️');
+                    }
                 }
             } else {
                 requestAnimationFrame(moveAlien);
@@ -203,6 +235,10 @@ Object.assign(App.prototype, {
 
     destroyAlien(alien, bullet) {
         if (!this.spaceActive) return;
+        if (alien.dataset.type === 'heart') {
+            if (bullet && bullet.parentNode) bullet.remove();
+            return;
+        }
         
         const aRect = alien.getBoundingClientRect();
         alien.remove();

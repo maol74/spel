@@ -117,6 +117,8 @@ Object.assign(App.prototype, {
                 } else if (rand < 0.8) {
                     const size = 30 + Math.random() * 40;
                     obstacles.push({ x: 800, y: 120 + Math.random() * 100, w: size, h: size, type: 'bird', icon: birdEmojis[Math.floor(Math.random() * birdEmojis.length)], size: size });
+                } else if (rand < 0.85) {
+                    obstacles.push({ x: 800, y: 150 + Math.random() * 100, w: 40, h: 40, type: 'heart', icon: '❤️', size: 40 });
                 } else {
                     const size = 30 + Math.random() * 40;
                     obstacles.push({ x: 800, y: 340 - size, w: size, h: size, type: 'box', icon: '📦', size: size });
@@ -166,6 +168,19 @@ Object.assign(App.prototype, {
                         if (o.type === 'treasure') {
                             score += 15;
                             if (hud) hud.innerText = score;
+                            obstacles.splice(i, 1);
+                            continue;
+                        }
+                        if (o.type === 'heart') {
+                            if (this.adventureLives < 5) {
+                                this.adventureLives++;
+                                this.updateAdventureLivesDisplay();
+                                this.showToast('EXTRALIV! ❤️');
+                            } else {
+                                score += 20;
+                                if (hud) hud.innerText = score;
+                                this.showToast('SUPERBONUS! 💎');
+                            }
                             obstacles.splice(i, 1);
                             continue;
                         }
