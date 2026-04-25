@@ -31,7 +31,9 @@ Object.assign(App.prototype, {
                 
                 <div class="story-content-text" style="max-height: none; overflow: visible; font-size: 1.1rem; text-align: left;">
                     <img src="${s.img}" style="width: 320px; float: left; margin: 0 25px 15px 0; border-radius: 20px; border: 3px solid var(--color-story); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                    <p style="margin: 0; line-height: 1.6;">${this.state.user?.name} ${s.text}</p>
+                    <p style="margin: 0; line-height: 1.6;">
+                        ${(`${this.state.user?.name} ${s.text}`).split(' ').map(word => `<span class="story-word">${word}</span>`).join(' ')}
+                    </p>
                     <div style="font-size: 3rem; margin-top: 15px; clear: both; text-align: center;">${s.icon}</div>
                 </div>
             </div>
