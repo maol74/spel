@@ -84,7 +84,7 @@ Object.assign(App.prototype, {
         const monsters = ['👾', '👽', '👹', '👻', '👺', '🤖'];
         monster.innerText = monsters[Math.floor(Math.random() * monsters.length)];
         
-        const currentSpeed = 1.0 + (this.state.difficulty * 0.5) + (this.whackCount * 0.1);
+        const currentSpeed = 0.5 + (this.state.difficulty * 0.2) + (this.whackCount * 0.05);
         const speedHud = document.getElementById('whack-speed');
         if (speedHud) speedHud.innerText = currentSpeed.toFixed(1);
 
@@ -98,7 +98,7 @@ Object.assign(App.prototype, {
             this.handleWhack(monster);
         };
         
-        const upTime = (1000 / currentSpeed) + (Math.random() * 400);
+        const upTime = (2500 / currentSpeed) + (Math.random() * 500);
         setTimeout(() => {
             if (!clicked && this.whackActive) {
                 // Missed one!
@@ -113,7 +113,7 @@ Object.assign(App.prototype, {
             monster.style.bottom = '-100%';
             monster.onclick = null;
             if (!this.whackActive) return;
-            this.whackLoop = setTimeout(() => this.startWhacking(), 400 + Math.random() * 800);
+            this.whackLoop = setTimeout(() => this.startWhacking(), 1000 + Math.random() * 1000);
         }, upTime);
     },
 
