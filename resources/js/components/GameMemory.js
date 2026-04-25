@@ -68,10 +68,14 @@ Object.assign(App.prototype, {
                     transform: rotateY(180deg);
                 }
                 .memory-card-obj.matched {
-                    opacity: 0.6;
                     pointer-events: none;
                     transform: rotateY(180deg) scale(0.95);
                     border-color: #2ECC71;
+                    box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+                }
+                .memory-card-obj.matched .front {
+                    background: #E8F8F5;
+                    color: #27AE60;
                 }
             </style>
         `;
