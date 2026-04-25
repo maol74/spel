@@ -85,6 +85,8 @@ Object.assign(App.prototype, {
                 letterEl.style.transform = 'scale(1)';
             }, 100);
         }, 50);
+        
+        this.addScore(1);
     },
 
     toggleRabbla() {

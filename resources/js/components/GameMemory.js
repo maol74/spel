@@ -130,6 +130,7 @@ Object.assign(App.prototype, {
             c1.classList.add('matched');
             c2.classList.add('matched');
             this.memoryPairsFound++;
+            this.addScore(1);
             document.getElementById('memory-count').innerText = this.memoryPairsFound;
             this.memoryFlippedCards = [];
             
@@ -155,9 +156,8 @@ Object.assign(App.prototype, {
             overlay.classList.remove('hidden');
         }
         if (won) {
-            this.state.score += 50;
+            this.addScore(5);
             this.incrementProgress();
-            this.saveState();
         }
     }
 });

@@ -44,10 +44,12 @@ Object.assign(App.prototype, {
         const targetLetter = this.currentWord[this.currentGuessedCount];
         if (l === targetLetter) {
             this.currentGuessedCount++;
+            this.addScore(1);
             this.renderStava();
             if (this.currentGuessedCount >= this.currentWord.length) {
                 setTimeout(() => { 
                     this.showToast(this.cheer(), 1500); 
+                    this.addScore(5);
                     this.incrementProgress();
                     this.currentWord = null; 
                     this.currentGuessedCount = 0; 

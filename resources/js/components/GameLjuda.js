@@ -70,7 +70,6 @@ Object.assign(App.prototype, {
             wordEl.style.opacity = '1';
         }, 50);
 
-        this.state.score += 5;
-        this.saveState();
+        this.addScore(1);
     }
 });

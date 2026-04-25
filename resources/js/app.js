@@ -267,9 +267,22 @@ class App {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 500);
         }, d);
+    },
+
+    addScore(points) {
+        if (!points) return;
+        this.state.score += points;
+        this.saveState();
+        
+        document.querySelectorAll('.hud-stats span:last-child').forEach(el => {
+            el.innerText = this.state.score;
+        });
+        
+        document.querySelectorAll('.hud-stats').forEach(el => {
+            el.style.transform = 'scale(1.2)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+        });
     }
-
-
 }
 
 window.gameApp = new App();

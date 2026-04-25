@@ -109,9 +109,8 @@ Object.assign(App.prototype, {
             statusText.style.color = won ? '#F1C40F' : '#E74C3C';
         }
         if (won) {
-            this.state.score += 100;
+            this.addScore(2);
             this.incrementProgress();
-            this.saveState();
         }
     },
 

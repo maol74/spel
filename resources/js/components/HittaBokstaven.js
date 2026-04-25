@@ -118,6 +118,7 @@ Object.assign(App.prototype, {
 
         span.onclick = () => {
             if (isTarget) {
+                this.addScore(1);
                 span.style.transform = 'scale(0) rotate(360deg)'; 
                 span.style.opacity = '0'; 
                 setTimeout(() => span.remove(), 300);
@@ -127,6 +128,7 @@ Object.assign(App.prototype, {
                 if (this.lettersToFind <= 0) { 
                     setTimeout(() => { 
                         this.showToast(this.cheer()); 
+                        this.addScore(5);
                         this.incrementProgress();
                         this.initHittaGame(); 
                     }, 500); 

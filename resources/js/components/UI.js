@@ -119,12 +119,13 @@ Object.assign(App.prototype, {
         div.innerHTML = `
             ${this.getHUD()}
             <h1>Hur svårt ska det vara?</h1>
-            <div class="menu-grid">
-                ${CONFIG.difficulties.map(d => `
-                    <div class="menu-card" style="border-color: ${d.color}" onclick="window.gameApp.selectDifficulty(${d.id})">
-                        <div class="menu-card-icon">${d.icon}</div>
-                        <div class="menu-card-text">
-                            <div class="menu-card-title" style="color: ${d.color}">${d.name}</div>
+            <div style="display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; padding: 0 20px;">
+                ${CONFIG.difficulties.map((d, index) => `
+                    <div class="menu-card" style="border-color: ${d.color}; display: flex; align-items: center; justify-content: flex-start; padding: 15px 30px; width: 100%;" onclick="window.gameApp.selectDifficulty(${d.id})">
+                        <div style="font-size: 2.5rem; margin-right: 20px; font-weight: bold; color: ${d.color}; min-width: 40px; text-align: center;">${index + 1}.</div>
+                        <div class="menu-card-icon" style="margin-bottom: 0; margin-right: 20px; font-size: 2.5rem;">${d.icon}</div>
+                        <div class="menu-card-text" style="text-align: left; flex-grow: 1;">
+                            <div class="menu-card-title" style="color: ${d.color}; font-size: 2rem; margin: 0;">${d.name}</div>
                         </div>
                     </div>
                 `).join('')}
