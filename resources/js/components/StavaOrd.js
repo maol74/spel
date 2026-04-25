@@ -6,6 +6,7 @@ Object.assign(App.prototype, {
         if (!this.currentWord) { 
             this.currentWord = levelWords[Math.floor(Math.random() * levelWords.length)]; 
             this.currentGuessedCount = 0;
+            this.currentWordPool = this.generateWordPool(this.currentWord);
         }
         
         const emoji = CONFIG.wordEmojis[this.currentWord] || '✏️';
@@ -19,16 +20,23 @@ Object.assign(App.prototype, {
                     ${this.currentWord.split('').map((l, i) => i < this.currentGuessedCount ? `<span style="color:var(--color-liam); border-bottom: 3px solid #2D3748; padding: 0 5px;">${l}</span>` : '<span style="border-bottom: 3px solid #2D3748; padding: 0 15px;">&nbsp;</span>').join(' ')}
                 </div>
                 <div id="letter-options" style="display:grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-top: 2rem;">
-                    ${this.getPossibleLetters().map(l => `<button class="letter-btn" onclick="window.gameApp.handleStavaGuess('${l}')">${l}</button>`).join('')}
+                    ${this.currentWordPool.map(l => `<button class="letter-btn" onclick="window.gameApp.handleStavaGuess('${l}')">${l}</button>`).join('')}
                 </div>
             </div>
         `;
     },
 
-    getPossibleLetters() {
+    generateWordPool(word) {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ';
-        const nextLetter = this.currentWord[this.currentGuessedCount] || '';
-        let possible = (nextLetter + alphabet.replace(nextLetter, '').slice(0, 15)).split('');
+        const wordLetters = word.split('');
+        let possible = [...wordLetters];
+        
+        // Add random letters until we have 16
+        while(possible.length < 16) {
+            const randomL = alphabet[Math.floor(Math.random() * alphabet.length)];
+            if (!possible.includes(randomL)) possible.push(randomL);
+        }
+        
         return [...new Set(possible)].sort();
     },
 
