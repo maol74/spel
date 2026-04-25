@@ -130,7 +130,7 @@ class App {
             'main-menu', 'game-stava', 'game-hitta', 'game-adventure', 
             'math-menu', 'game-math-penguin', 'game-math-feed', 
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
-            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda'
+            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop'
         ];
         ids.forEach(id => {
             this.screens[id] = document.getElementById(id);
@@ -206,6 +206,7 @@ class App {
             }
             if (screenId === 'user-select' && this.updateUserSelectScreen) this.updateUserSelectScreen();
             if (screenId === 'main-menu' && this.updateMainMenuScreen) this.updateMainMenuScreen();
+            if (screenId === 'shop' && this.updateShopScreen) this.updateShopScreen();
             if (screenId === 'math-menu' && this.updateMathMenuScreen) this.updateMathMenuScreen();
             if (screenId === 'dots-menu' && this.updateDotsMenuScreen) this.updateDotsMenuScreen();
             if (screenId === 'penguin-menu' && this.updatePenguinMenuScreen) this.updatePenguinMenuScreen();
