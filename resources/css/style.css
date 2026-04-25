@@ -377,3 +377,7 @@ body {
 .animate-spin-float {
     animation: spin-float 6s linear infinite;
 }
+@keyframes hitta-continuous-rotate {
+    from { transform: translate(-50%, -50%) rotate(var(--start-rot, 0deg)); }
+    to { transform: translate(-50%, -50%) rotate(calc(var(--start-rot, 0deg) + 360deg)); }
+}
