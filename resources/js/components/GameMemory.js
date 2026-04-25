@@ -1,3 +1,4 @@
+Object.assign(App.prototype, {
     initGameMemory(size = 4) {
         this.memoryGridSize = size;
         const div = this.screens['game-memory'];
