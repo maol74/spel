@@ -58,8 +58,9 @@ Object.assign(App.prototype, {
         if (this.state.score >= item.price) {
             this.state.score -= item.price;
             this.state.purchasedItems.push(id);
+            this.state.avatar = item; // Auto-equip the new avatar
             this.saveState();
-            this.showToast(`Du köpte ${item.name}! 🎉`, 4000);
+            this.showToast(`Du köpte och bytte till ${item.name}! 🎉`, 4000);
             
             // Re-render HUD to update score
             this.updateShopScreen();
