@@ -9,15 +9,15 @@ const CONFIG = {
     ],
     difficultyWords: {
         1: ['SOL', 'BIL', 'BUS', 'TÅG', 'KEX', 'IS'],
-        2: ['KATT', 'HUND', 'FISK', 'HÄST', 'BANA', 'BÅT'],
-        3: ['ZEBRA', 'KANIN', 'NALLA', 'ÄPPLE', 'SKRATT'],
+        2: ['KATT', 'HUND', 'FISK', 'HÄST', 'BANAN', 'BÅT'],
+        3: ['ZEBRA', 'KANIN', 'NALLE', 'ÄPPLE', 'SKRATT'],
         4: ['GIRAFF', 'TIGER', 'BANAN', 'CITRON', 'FLASKA'],
         5: ['ELEFANT', 'PANNKAKA', 'RYMDSTATION', 'DINOSAURIE']
     },
     wordEmojis: {
         'SOL': '☀️', 'BIL': '🚗', 'BUS': '🚌', 'TÅG': '🚂', 'KEX': '🍪', 'IS': '🧊',
-        'KATT': '🐱', 'HUND': '🐶', 'FISK': '🐟', 'HÄST': '🐴', 'BANA': '🍌', 'BÅT': '⛵',
-        'ZEBRA': '🦓', 'KANIN': '🐰', 'NALLA': '🧸', 'ÄPPLE': '🍎', 'SKRATT': '😄',
+        'KATT': '🐱', 'HUND': '🐶', 'FISK': '🐟', 'HÄST': '🐴', 'BANAN': '🍌', 'BÅT': '⛵',
+        'ZEBRA': '🦓', 'KANIN': '🐰', 'NALLE': '🧸', 'ÄPPLE': '🍎', 'SKRATT': '😄',
         'GIRAFF': '🦒', 'TIGER': '🐯', 'BANAN': '🍌', 'CITRON': '🍋', 'FLASKA': '🍼',
         'ELEFANT': '🐘', 'PANNKAKA': '🥞', 'RYMDSTATION': '🚀', 'DINOSAURIE': 'REX'
     },
