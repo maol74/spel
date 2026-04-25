@@ -137,8 +137,9 @@ Object.assign(App.prototype, {
         area.appendChild(b);
         
         const speed = 1.2 + Math.random() * 1.5 + (this.state.difficulty * 0.4) + (this.popCount * 0.05);
-        const drift = (Math.random() - 0.5) * 1.5;
+        let drift = (Math.random() - 0.5) * 1.5;
         let pos = -150;
+        const sizePct = (size / 800) * 100; // Container is 800px wide
         
         const move = () => {
             if (!this.popActive || !b.parentNode || this.state.currentScreen !== 'game-pop') {
@@ -147,7 +148,19 @@ Object.assign(App.prototype, {
             }
             pos += speed;
             b.style.bottom = pos + 'px';
-            b.style.left = (parseFloat(b.style.left) + drift) + '%';
+            
+            let currentLeft = parseFloat(b.style.left) + drift;
+            
+            // Bounce against edges
+            if (currentLeft <= 0) {
+                currentLeft = 0;
+                drift = Math.abs(drift); // Bounce right
+            } else if (currentLeft + sizePct >= 100) {
+                currentLeft = 100 - sizePct;
+                drift = -Math.abs(drift); // Bounce left
+            }
+            
+            b.style.left = currentLeft + '%';
             
             if (pos > 600) {
                 b.remove();
