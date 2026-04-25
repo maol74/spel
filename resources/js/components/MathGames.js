@@ -110,13 +110,14 @@ Object.assign(App.prototype, {
             penguin.style.left = (rect.left - areaRect.left + 15) + 'px';
             penguin.style.top = (rect.top - areaRect.top - 25) + 'px';
             this.mathIndex++;
-            this.addScore(1);
+            const m = this.mathMode === 'sub' ? 2 : (this.mathMode === 'mult' ? 3 : 1);
+            this.addScore(1 * m);
             if (this.mathIndex >= this.mathTargets.length) {
                 penguin.style.left = '85%';
                 penguin.style.top = '10%';
                 setTimeout(() => {
                     this.showToast('BRA RÄKNAT! 🐟🐧');
-                    this.addScore(5);
+                    this.addScore(5 * m);
                     this.incrementProgress();
                     setTimeout(() => this.showScreen('penguin-menu'), 3000);
                 }, 600);
@@ -236,7 +237,8 @@ Object.assign(App.prototype, {
     checkFeed() {
         if (this.feedCount === this.feedTarget) {
             this.showToast('Mums! 😋 GOTT! ❤️'); 
-            this.addScore(5);
+            const m = this.feedMode === 'sub' ? 2 : (this.feedMode === 'mult' ? 3 : 1);
+            this.addScore(5 * m);
             this.incrementProgress(); 
             setTimeout(() => this.initMathFeedGame(this.feedMode), 3000);
         } else {
@@ -379,7 +381,8 @@ Object.assign(App.prototype, {
         if (this.dotsClicked.includes(index)) return;
         if (index === this.dotsClicked.length) {
             this.dotsClicked.push(index);
-            this.addScore(1);
+            const m = this.dotsMode === 'sub' ? 2 : (this.dotsMode === 'mult' ? 3 : 1);
+            this.addScore(1 * m);
             const dotEl = document.querySelector(`#dot-${index} > div`);
             if (dotEl) { dotEl.style.background = '#4CAF50'; dotEl.style.color = 'white'; }
             this.updateDotsProblem();
@@ -402,7 +405,8 @@ Object.assign(App.prototype, {
                 line.setAttribute('stroke', '#4CAF50'); line.setAttribute('stroke-width', '6'); svg.appendChild(line);
                 setTimeout(() => { 
                     this.showToast('MAGISKT! ❤️'); 
-                    this.addScore(5);
+                    const m = this.dotsMode === 'sub' ? 2 : (this.dotsMode === 'mult' ? 3 : 1);
+                    this.addScore(5 * m);
                     this.incrementProgress();
                     
                     if (this.dotsRound < this.dotsTotal) {
