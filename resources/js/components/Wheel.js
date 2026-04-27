@@ -10,7 +10,7 @@ Object.assign(App.prototype, {
                 <p style="color: #A0AEC0; margin-bottom: 40px;">Snurra och vinn stjärnor!</p>
 
                 <div id="wheel-container" style="position: relative; width: 900px; height: 900px; margin: -250px auto -200px;">
-                    <svg viewBox="-100 -100 300 300" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+                    <svg viewBox="-100 -100 300 300" style="width: 100%; height: 100%; transform: rotate(-112.5deg); overflow: visible;">
                         <circle cx="50" cy="50" r="48" fill="#2D3748" stroke="#4A5568" stroke-width="2" />
                         ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `
                             <path d="M50,50 L${50 + 48 * Math.cos(i * Math.PI / 4)},${50 + 48 * Math.sin(i * Math.PI / 4)} A48,48 0 0,1 ${50 + 48 * Math.cos((i + 1) * Math.PI / 4)},${50 + 48 * Math.sin((i + 1) * Math.PI / 4)} Z" 
@@ -68,9 +68,15 @@ Object.assign(App.prototype, {
         const randomIndex = Math.floor(Math.random() * segments.length);
         const prize = segments[randomIndex];
         
-        // Target is just for logic, we use speed and friction for movement
+        // Correct rotation logic:
+        // We want slice randomIndex to land at the top.
+        // Slice 0 is already at top (center).
+        // To bring slice 1 to top, we rotate by (360 - 45) degrees.
+        // So target = 3600 + (360 - randomIndex * 45)
+        const targetRotation = 3600 + (360 - (randomIndex * 45));
+        
         let currentRotation = 0;
-        let speed = 40; // Even faster start for 6x radius
+        let speed = 40; 
         let lastTime = 0;
         
         const animate = (time) => {
@@ -81,12 +87,12 @@ Object.assign(App.prototype, {
             const wheelEl = document.getElementById('wheel-container');
             if (!wheelEl || this.state.currentScreen !== 'wheel-screen') return;
             
-            // Decelerate
-            speed *= 0.992; // Even more gradual for longer fly-out
+            // Decelerate smoothly
+            // We want to land near targetRotation
+            speed *= 0.992;
             currentRotation += speed * dt;
             
-            // Centrifugal force: move avatars radially
-            // Max extra radius 100 (20 base + 100 extra = 120 total = 6x base)
+            // Centrifugal force
             const extraRadius = Math.min(speed * 3.0, 100); 
             const baseRadius = 20;
             const currentRadius = baseRadius + extraRadius;
@@ -108,10 +114,10 @@ Object.assign(App.prototype, {
             if (speed > 0.15) {
                 requestAnimationFrame(animate);
             } else {
-                // Snapped to final result
-                const finalOffset = (randomIndex * 45) + 22.5;
-                // We don't snap rotation to keep it look natural, just show result
-                
+                // Force snap to target for accuracy
+                currentRotation = targetRotation;
+                wheelEl.style.transform = `rotate(${currentRotation}deg)`;
+
                 this.state.lastSpinDate = new Date().toDateString();
                 this.addScore(prize);
                 this.saveState();
