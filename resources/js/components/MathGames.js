@@ -204,7 +204,7 @@ Object.assign(App.prototype, {
                     
                     <div id="animal-target" style="position: relative; font-size: 10rem; width: 220px; height: 220px; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.4); border-radius: 50%; border: 4px dashed #E67E22;">
                         ${animal}
-                        <div id="animal-counter" style="position: absolute; bottom: 0; right: 0; background: #E67E22; color: white; width: 60px; height: 60px; border-radius: 50%; font-size: 2rem; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">0</div>
+                        <div id="animal-counter" style="position: absolute; bottom: 0; right: 0; background: #E67E22; color: white; width: 60px; height: 60px; border-radius: 50%; font-size: 2rem; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10;">0</div>
                     </div>
 
                     <button class="menu-card" style="width: 80px; height: 80px; border-radius: 50%; background: #2ECC71; border: none; font-size: 2.5rem; color: white; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);" onclick="window.gameApp.addFoodToAnimal('${food}')">➡️</button>
