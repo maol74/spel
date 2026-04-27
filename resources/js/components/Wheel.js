@@ -17,7 +17,7 @@ Object.assign(App.prototype, {
                                   fill="${i % 2 === 0 ? '#3498DB' : '#2980B9'}" stroke="#1A202C" stroke-width="0.5" />
                             <text x="${50 + 35 * Math.cos((i + 0.5) * Math.PI / 4)}" y="${50 + 35 * Math.sin((i + 0.5) * Math.PI / 4)}" 
                                   fill="white" font-size="6" font-weight="bold" text-anchor="middle" dominant-baseline="middle" transform="rotate(${(i + 0.5) * 45 + 90}, ${50 + 35 * Math.cos((i + 0.5) * Math.PI / 4)}, ${50 + 35 * Math.sin((i + 0.5) * Math.PI / 4)})">
-                                ${[50, 100, 200, 50, 500, 100, 50, 200][i]}
+                                ${[10, 20, 50, 10, 150, 25, 10, 50][i]}
                             </text>
                         `).join('')}
                     </svg>
@@ -57,7 +57,7 @@ Object.assign(App.prototype, {
         
         controls.innerHTML = '<div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; animation: pulse 1s infinite;">Snurrar... 🍀</div>';
         
-        const segments = [50, 100, 200, 50, 500, 100, 50, 200];
+        const segments = [10, 20, 50, 10, 150, 25, 10, 50];
         const randomIndex = Math.floor(Math.random() * segments.length);
         const prize = segments[randomIndex];
         
