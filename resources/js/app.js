@@ -178,6 +178,10 @@ class App {
     }
 
     showScreen(screenId, updateHash = true) {
+        if (this.state.currentScreen === 'admin-menu' && screenId !== 'admin-menu') {
+            this._adminAuthenticated = false;
+        }
+
         if (screenId === this.state.currentScreen && !['password-screen'].includes(screenId)) return;
 
         if (screenId === 'admin-menu' && !this._adminAuthenticated) {
@@ -270,7 +274,7 @@ class App {
     renderPasswordScreen() {
         const div = this.screens['password-screen'];
         div.innerHTML = `
-            <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: var(--bg-color);">
+            <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px; height: 100vh; background: var(--bg-color);">
                 <div class="game-card" style="max-width: 400px; padding: 40px; text-align: center; border: 4px solid var(--color-william); box-shadow: 0 0 50px rgba(74, 144, 226, 0.2);">
                     <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
                     <h2 style="margin-bottom: 10px;">Endast vuxna</h2>
