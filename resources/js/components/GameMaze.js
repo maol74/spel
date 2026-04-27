@@ -29,34 +29,43 @@ Object.assign(App.prototype, {
     },
 
     nextMazeRound() {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ";
-        this.mazeTarget = letters[Math.floor(Math.random() * letters.length)];
-        document.getElementById('maze-target-char').innerText = this.mazeTarget;
-
+        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ";
+        const lower = "abcdefghijklmnopqrstuvwxyzåäö";
+        const all = upper + lower;
+        
         const size = 6;
         const container = document.getElementById('maze-container');
         container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         container.innerHTML = '';
 
         // Generate a random path from 0,0 to size-1,size-1
-        const path = [];
+        const pathCoords = [];
         let cx = 0, cy = 0;
-        path.push(`${cx},${cy}`);
+        pathCoords.push(`${cx},${cy}`);
         while (cx < size - 1 || cy < size - 1) {
             if (cx < size - 1 && (Math.random() > 0.5 || cy === size - 1)) cx++;
             else cy++;
-            path.push(`${cx},${cy}`);
+            pathCoords.push(`${cx},${cy}`);
         }
 
+        this.mazePath = pathCoords;
         this.mazePlayer = { x: 0, y: 0 };
-        this.mazeGrid = [];
+        this.mazeStep = 0;
+        
+        // Pre-assign a unique letter to each step in the path and random bonuses
+        this.mazePathLetters = pathCoords.map(() => all[Math.floor(Math.random() * all.length)]);
+        this.mazeBonuses = pathCoords.map((_, i) => (i > 0 && Math.random() < 0.2)); // 20% chance for bonus, except start
+        this.mazeTarget = this.mazePathLetters[1]; 
 
         for (let r = 0; r < size; r++) {
             for (let c = 0; c < size; c++) {
-                const isPath = path.includes(`${c},${r}`);
-                let char = letters[Math.floor(Math.random() * letters.length)];
-                if (isPath) char = this.mazeTarget;
-                else if (char === this.mazeTarget) char = letters[(letters.indexOf(char) + 1) % letters.length];
+                const pathIndex = pathCoords.indexOf(`${c},${r}`);
+                let char;
+                if (pathIndex !== -1) {
+                    char = this.mazePathLetters[pathIndex];
+                } else {
+                    char = all[Math.floor(Math.random() * all.length)];
+                }
 
                 const cell = document.createElement('div');
                 cell.id = `maze-${c}-${r}`;
@@ -69,11 +78,30 @@ Object.assign(App.prototype, {
                 `;
                 cell.innerText = char;
 
-                if (c === 0 && r === 0) cell.innerHTML += `<div id="maze-player" style="position: absolute; font-size: 2.5rem; z-index: 10; transition: all 0.3s;">🏃</div>`;
+                if (pathIndex !== -1 && this.mazeBonuses[pathIndex]) {
+                    cell.innerHTML += `<div class="maze-bonus" style="position: absolute; top: 2px; right: 2px; font-size: 1rem; filter: drop-shadow(0 0 2px orange);">⭐</div>`;
+                }
+
+                if (c === 0 && r === 0) {
+                    cell.innerHTML += `<div id="maze-player" style="position: absolute; font-size: 2.5rem; z-index: 10; transition: all 0.3s;">🏃</div>`;
+                    cell.style.background = '#E1F5FE';
+                }
                 if (c === size - 1 && r === size - 1) cell.style.background = '#E8F5E9'; // Goal color
 
                 cell.onclick = () => this.handleMazeMove(c, r);
                 container.appendChild(cell);
+            }
+        }
+        this.updateMazeInstructions();
+    },
+
+    updateMazeInstructions() {
+        const el = document.getElementById('maze-target-char');
+        if (el) {
+            if (this.mazeStep < this.mazePathLetters.length - 1) {
+                el.innerText = this.mazePathLetters[this.mazeStep + 1];
+            } else {
+                el.innerText = 'MÅL!';
             }
         }
     },
@@ -84,13 +112,30 @@ Object.assign(App.prototype, {
         const dy = Math.abs(this.mazePlayer.y - y);
         
         if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
-            const cell = document.getElementById(`maze-${x}-${y}`);
-            if (cell.innerText.includes(this.mazeTarget)) {
+            // Check if this move is the NEXT step in the path
+            const nextStep = this.mazePath[this.mazeStep + 1];
+            if (nextStep === `${x},${y}`) {
+                this.mazeStep++;
                 this.mazePlayer = { x, y };
                 const player = document.getElementById('maze-player');
+                const cell = document.getElementById(`maze-${x}-${y}`);
+                
+                // Handle bonus
+                const bonusEl = cell.querySelector('.maze-bonus');
+                if (bonusEl) {
+                    this.addScore(20);
+                    this.showToast('BONUS-STJÄRNA! ⭐ +20', 1000);
+                    bonusEl.style.transform = 'scale(3) rotate(360deg)';
+                    bonusEl.style.opacity = '0';
+                    setTimeout(() => bonusEl.remove(), 500);
+                }
+
                 cell.appendChild(player);
+                cell.style.background = '#E1F5FE';
                 this.addScore(2);
                 
+                this.updateMazeInstructions();
+
                 if (x === 5 && y === 5) {
                     this.showToast('DU ÄR FRAMME! 🏆🎉', 1500);
                     this.addScore(10);
@@ -99,9 +144,10 @@ Object.assign(App.prototype, {
                     setTimeout(() => this.nextMazeRound(), 2000);
                 }
             } else {
-                this.showToast('Aj! Fel bokstav! 😅', 500);
+                this.showToast('Hoppsan! Gå på bokstaven i rutan! 😅', 500);
+                const cell = document.getElementById(`maze-${x}-${y}`);
                 cell.style.background = '#FFCDD2';
-                setTimeout(() => cell.style.background = 'white', 500);
+                setTimeout(() => { if (cell.style.background !== 'rgb(225, 245, 254)') cell.style.background = 'white'; }, 500);
             }
         }
     }

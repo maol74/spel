@@ -14,8 +14,8 @@ Object.assign(App.prototype, {
                 </div>
 
                 <div id="train-track" style="display: flex; align-items: flex-end; justify-content: center; gap: 5px; margin: 50px 0; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);">
-                    <div style="font-size: 8rem; margin-right: -20px; z-index: 2;">🚂</div>
-                    <div id="train-wagons" style="display: flex; gap: 5px;"></div>
+                    <div id="train-wagons" style="display: flex; gap: 5px; padding-bottom: 15px;"></div>
+                    <div style="font-size: 8rem; margin-left: -5px; z-index: 2; transform: scaleX(-1); margin-bottom: -10px;">🚂</div>
                 </div>
 
                 <div id="train-options" style="display: flex; gap: 20px; justify-content: center; margin-top: 50px;"></div>
@@ -27,7 +27,10 @@ Object.assign(App.prototype, {
     },
 
     nextTrainRound() {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".split('');
+        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ";
+        const lower = "abcdefghijklmnopqrstuvwxyzåäö";
+        const alphabet = Math.random() > 0.5 ? upper : lower;
+        const letters = alphabet.split('');
         const startIndex = Math.floor(Math.random() * (letters.length - 4));
         const sequence = letters.slice(startIndex, startIndex + 4);
         const missingIndex = Math.floor(Math.random() * 4);
