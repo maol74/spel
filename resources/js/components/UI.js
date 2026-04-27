@@ -1,5 +1,7 @@
 Object.assign(App.prototype, {
     getHUD() {
+        if (!this.state.user) return '';
+        const bedtimeIcon = this.state.bedtimeMode ? '🌙' : '☀️';
         const cur = this.state.currentScreen;
         const isHome = cur === 'main-menu';
         const backMap = {
@@ -29,6 +31,7 @@ Object.assign(App.prototype, {
             'shop': 'main-menu'
         };
         const backTarget = backMap[cur];
+
         return `
             <div class="hud-bar">
                 <div class="hud-left" style="display: flex; gap: 20px; align-items: center;">
@@ -47,15 +50,16 @@ Object.assign(App.prototype, {
                         </div>
                     </div>
                 </div>
-                <div class="hud-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                    <div class="hud-stats" style="cursor: pointer; transition: transform 0.2s;" onclick="window.gameApp.showScreen('shop')" title="Gå till butiken" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="hud-right" style="display: flex; align-items: center; gap: 20px;">
+                    <div class="hud-stats" style="cursor: pointer; transition: transform 0.2s;" onclick="window.gameApp.showScreen('shop')" title="Gå till butiken">
                         <span style="font-size: 1.2rem;">⭐</span>
                         <span style="font-weight: bold; color: #F1C40F;">${this.state.score}</span>
                     </div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <div style="color: #2ECC71; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Hjälte-Nivå ${this.state.level || 1}</div>
-                        <div class="hud-progress" style="margin-top: 0; background: rgba(46, 204, 113, 0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">${this.progressCount} / ${this.config.targetProgress || 20}</div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                        <div style="color: #2ECC71; font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">Nivå ${this.state.level || 1}</div>
+                        <div class="hud-progress" style="margin-top: 0; background: rgba(46, 204, 113, 0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">${this.progressCount} / ${this.config.targetProgress || 20}</div>
                     </div>
+                    <div onclick="window.gameApp.toggleBedtimeMode()" style="cursor: pointer; font-size: 1.8rem; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" title="Sovläge">${bedtimeIcon}</div>
                 </div>
             </div>
         `;
