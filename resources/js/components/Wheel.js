@@ -9,7 +9,7 @@ Object.assign(App.prototype, {
                 <h1 style="color: #F1C40F; margin-bottom: 10px;">Dagens Lyckohjul 🎡</h1>
                 <p style="color: #A0AEC0; margin-bottom: 40px;">Snurra och vinn stjärnor!</p>
 
-                <div id="wheel-container" style="position: relative; width: 300px; height: 300px; margin: 0 auto 40px; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);">
+                <div id="wheel-container" style="position: relative; width: 300px; height: 300px; margin: 0 auto 40px;">
                     <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; transform: rotate(-90deg);">
                         <circle cx="50" cy="50" r="48" fill="#2D3748" stroke="#4A5568" stroke-width="2" />
                         ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `
