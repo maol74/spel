@@ -9,7 +9,9 @@ class App {
             score: 100,
             level: 1,
             progress: '1 / 20',
-            purchasedItems: []
+            purchasedItems: [],
+            lastSpinDate: null,
+            badges: []
         };
         this.screens = {};
         this.guessedLetters = [];
@@ -78,9 +80,7 @@ class App {
         const progEl = document.querySelector('.hud-progress');
         if (progEl) progEl.innerText = this.state.progress;
         
-        const levelEl = document.querySelector('.hud-level');
-        if (levelEl) levelEl.innerText = `NIVÅ ${this.state.level + 3}`; // Assuming difficulty + 3 is the visual level, but wait, UI uses this.state.difficulty + 3? Let's not touch hud-level text here unless we have to, UI.js sets it.
-        
+        this.cheer('jump');
         this.saveState();
     }
 
@@ -130,7 +130,8 @@ class App {
             'main-menu', 'game-stava', 'game-hitta', 'game-adventure', 
             'math-menu', 'game-math-penguin', 'game-math-feed', 
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
-            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen'
+            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen',
+            'profile-screen', 'wheel-screen', 'creator-screen'
         ];
         ids.forEach(id => {
             this.screens[id] = document.getElementById(id);
@@ -268,6 +269,11 @@ class App {
             if (screenId === 'game-memory' && this.initGameMemory) this.initGameMemory();
             if (screenId === 'game-rabbla' && this.initGameRabbla) this.initGameRabbla();
             if (screenId === 'game-ljuda' && this.initGameLjuda) this.initGameLjuda();
+            
+            // New screens
+            if (screenId === 'profile-screen' && this.renderProfileScreen) this.renderProfileScreen();
+            if (screenId === 'wheel-screen' && this.renderWheelScreen) this.renderWheelScreen();
+            if (screenId === 'creator-screen' && this.initCreatorScreen) this.initCreatorScreen();
         }
     }
 
@@ -326,9 +332,25 @@ class App {
         }
     }
 
-    cheer() {
-        const cheers = ['Snyggt jobbat!', 'Heja dig!', 'Wow, vad duktig du är!', 'Kanonbra!', 'Stjärna! ⭐', 'Helt rätt!', 'Grymt!', 'Superbra!'];
-        return cheers[Math.floor(Math.random() * cheers.length)];
+    cheer(type = 'jump', message = null) {
+        const cheerleader = document.getElementById('cheerleader');
+        const bubble = document.getElementById('cheer-bubble');
+        if (!cheerleader) return;
+
+        cheerleader.classList.remove('jump', 'wave');
+        void cheerleader.offsetWidth; // Force reflow
+        cheerleader.classList.add(type);
+
+        if (message && bubble) {
+            bubble.innerText = message;
+            bubble.classList.add('show');
+            setTimeout(() => bubble.classList.remove('show'), 3000);
+        } else if (bubble && Math.random() < 0.3) {
+            const messages = ['Heja dig! 🌟', 'Snyggt jobbat! 👏', 'Wow! ✨', 'Kanon! 🏆', 'Grymt! 🔥', 'Stjärna! ⭐'];
+            bubble.innerText = messages[Math.floor(Math.random() * messages.length)];
+            bubble.classList.add('show');
+            setTimeout(() => bubble.classList.remove('show'), 2000);
+        }
     }
 
     showToast(text, duration) {
@@ -357,6 +379,8 @@ class App {
             el.style.transform = 'scale(1.2)';
             setTimeout(() => el.style.transform = 'scale(1)', 200);
         });
+
+        this.cheer(points > 50 ? 'jump' : 'wave');
     }
 }
 

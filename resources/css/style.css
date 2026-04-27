@@ -405,8 +405,62 @@ h1 {
     from { transform: translate(-50%, -50%) rotate(var(--start-rot, 0deg)); }
     to { transform: translate(-50%, -50%) rotate(calc(var(--start-rot, 0deg) + 360deg)); }
 }
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+@keyframes cheerJump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
+}
+
+@keyframes cheerWave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-15deg); }
+    75% { transform: rotate(15deg); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bubbleShow {
+    0% { transform: translateX(-50%) scale(0); opacity: 0; }
+    100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+.cheerleader-container.jump { animation: cheerJump 0.5s ease-in-out; }
+.cheerleader-container.wave { animation: cheerWave 0.5s ease-in-out; }
+
+.cheerleader-bubble.show {
+    display: block !important;
+    animation: bubbleShow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Badge Styles */
+.badge-item {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.badge-item:hover {
+    transform: translateY(-10px) rotate(5deg);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* Color Picker */
+.color-picker {
+    transition: transform 0.2s;
+}
+.color-picker:hover {
+    transform: scale(1.2);
+    z-index: 2;
+}
+
+/* Menu Grid Update */
+@media (min-width: 900px) {
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.95); }
 }

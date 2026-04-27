@@ -147,7 +147,7 @@ Object.assign(App.prototype, {
         const div = this.screens['main-menu'];
         div.innerHTML = `
             ${this.getHUD()}
-            <h1>Hej ${this.state.user ? this.state.user.name : 'där'}!</h1>
+            <h1>Hej ${this.state.user ? this.state.user.name : 'där'}! 👋</h1>
             <div class="menu-grid">
                 <div class="menu-card active-orange" onclick="window.gameApp.showScreen('spel-menu')">
                     <div class="menu-card-icon">🎮</div>
@@ -173,15 +173,15 @@ Object.assign(App.prototype, {
                 <div class="menu-card" style="border-color: #F1C40F" onclick="window.gameApp.showScreen('math-menu')">
                     <div class="menu-card-icon">🔢</div>
                     <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #F1C40F">Matte-Äventyret</div>
-                        <div class="menu-card-subtitle">Pingvin, Mata & Mer!</div>
+                        <div class="menu-card-title" style="color: #F1C40F">Matte-Äventyr</div>
+                        <div class="menu-card-subtitle">Räkna med djuren!</div>
                     </div>
                 </div>
                 <div class="menu-card" style="border-color: var(--color-story)" onclick="window.gameApp.showScreen('stories')">
                     <div class="menu-card-icon">📖</div>
                     <div class="menu-card-text">
                         <div class="menu-card-title" style="color: var(--color-story)">Sagor</div>
-                        <div class="menu-card-subtitle">Läs spännande berättelser!</div>
+                        <div class="menu-card-subtitle">Läs om dig själv!</div>
                     </div>
                 </div>
                 <div class="menu-card" style="border-color: #2ECC71" onclick="window.gameApp.showScreen('shop')">
@@ -191,11 +191,47 @@ Object.assign(App.prototype, {
                         <div class="menu-card-subtitle">Köp nya figurer!</div>
                     </div>
                 </div>
+                <div class="menu-card" style="border-color: #F1C40F" onclick="window.gameApp.showScreen('wheel-screen')">
+                    <div class="menu-card-icon">🎡</div>
+                    <div class="menu-card-text">
+                        <div class="menu-card-title" style="color: #F1C40F">Lyckohjulet</div>
+                        <div class="menu-card-subtitle">Vinn stjärnor!</div>
+                    </div>
+                </div>
+                <div class="menu-card" style="border-color: #3498DB" onclick="window.gameApp.showScreen('profile-screen')">
+                    <div class="menu-card-icon">📸</div>
+                    <div class="menu-card-text">
+                        <div class="menu-card-title" style="color: #3498DB">Min Profil</div>
+                        <div class="menu-card-subtitle">Se dina märken!</div>
+                    </div>
+                </div>
+                <div class="menu-card" style="border-color: #FF6B6B" onclick="window.gameApp.showScreen('creator-screen')">
+                    <div class="menu-card-icon">🎨</div>
+                    <div class="menu-card-text">
+                        <div class="menu-card-title" style="color: #FF6B6B">Skaparlådan</div>
+                        <div class="menu-card-subtitle">Rita & klistra!</div>
+                    </div>
+                </div>
                 <div class="menu-card" style="border-color: #718096" onclick="window.gameApp.showScreen('admin-menu')">
                     <div class="menu-card-icon">⚙️</div>
                     <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #718096">Admin</div>
+                        <div class="menu-card-title" style="color: #718096">Inställningar</div>
                     </div>
+                </div>
+            </div>
+            ${this.getCheerleader()}
+        `;
+    },
+
+    getCheerleader() {
+        if (!this.state.avatar || !['game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-adventure', 'main-menu'].includes(this.state.currentScreen)) return '';
+        return `
+            <div id="cheerleader" class="cheerleader-container" style="position: fixed; bottom: 30px; left: 30px; z-index: 1000; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <div class="cheerleader-bubble hidden" id="cheer-bubble" style="position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: white; padding: 10px 15px; border-radius: 20px; border: 3px solid var(--color-william); min-width: 120px; text-align: center; font-weight: bold; color: #2D3748; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-size: 0.9rem;">
+                    Heja dig! 🌟
+                </div>
+                <div class="cheerleader-avatar" style="font-size: 5rem; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                    ${this.state.avatar.icon}
                 </div>
             </div>
         `;
