@@ -10,7 +10,7 @@ Object.assign(App.prototype, {
                 <p style="color: #A0AEC0; margin-bottom: 40px;">Snurra och vinn stjärnor!</p>
 
                 <div id="wheel-container" style="position: relative; width: 300px; height: 300px; margin: 0 auto 40px;">
-                    <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                    <svg viewBox="-20 -20 140 140" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
                         <circle cx="50" cy="50" r="48" fill="#2D3748" stroke="#4A5568" stroke-width="2" />
                         ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `
                             <path d="M50,50 L${50 + 48 * Math.cos(i * Math.PI / 4)},${50 + 48 * Math.sin(i * Math.PI / 4)} A48,48 0 0,1 ${50 + 48 * Math.cos((i + 1) * Math.PI / 4)},${50 + 48 * Math.sin((i + 1) * Math.PI / 4)} Z" 
@@ -69,7 +69,7 @@ Object.assign(App.prototype, {
         
         // Target is just for logic, we use speed and friction for movement
         let currentRotation = 0;
-        let speed = 30; 
+        let speed = 35; // Increased start speed
         let lastTime = 0;
         
         const animate = (time) => {
@@ -81,12 +81,12 @@ Object.assign(App.prototype, {
             if (!wheelEl || this.state.currentScreen !== 'wheel-screen') return;
             
             // Decelerate
-            speed *= 0.988;
+            speed *= 0.99; // Slightly slower deceleration for more drama
             currentRotation += speed * dt;
             
             // Centrifugal force: move avatars radially
-            // Max extra radius 15, goes to 0 as speed goes to 0
-            const extraRadius = Math.min(speed * 0.6, 18); 
+            // Max extra radius 40 (20 base + 40 extra = 60 total)
+            const extraRadius = Math.min(speed * 1.5, 40); 
             const baseRadius = 20;
             const currentRadius = baseRadius + extraRadius;
 
