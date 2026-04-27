@@ -98,39 +98,63 @@ Object.assign(App.prototype, {
         const area = document.getElementById('pop-area');
         if (!area) return;
         
+        const isStar = Math.random() < 0.15;
         const b = document.createElement('div');
         const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#9B59B6', '#E67E22', '#4A90E2'];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const size = 80 + Math.random() * 50;
+        const size = isStar ? 60 : (80 + Math.random() * 50);
         
-        b.style.cssText = `
-            position: absolute;
-            bottom: -150px;
-            left: ${10 + Math.random() * 80}%;
-            width: ${size}px;
-            height: ${size * 1.2}px;
-            background: ${color};
-            border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
-            cursor: pointer;
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.1);
-            transition: opacity 0.2s;
-            z-index: 5;
-            padding: 20px;
-            margin: -20px;
-        `;
-        
-        const gloss = document.createElement('div');
-        gloss.style.cssText = `position: absolute; top: 15%; left: 20%; width: 25%; height: 15%; background: rgba(255,255,255,0.4); border-radius: 50%; transform: rotate(-30deg); pointer-events: none;`;
-        b.appendChild(gloss);
-        
-        const string = document.createElement('div');
-        string.style.cssText = `position: absolute; bottom: -30px; left: 50%; width: 2px; height: 40px; background: rgba(0,0,0,0.15); transform: translateX(-50%); pointer-events: none;`;
-        b.appendChild(string);
+        if (isStar) {
+            b.innerText = '⭐';
+            b.style.cssText = `
+                position: absolute;
+                bottom: -150px;
+                left: ${10 + Math.random() * 80}%;
+                font-size: ${size}px;
+                cursor: pointer;
+                z-index: 10;
+                filter: drop-shadow(0 0 10px #F1C40F);
+                animation: pulse 1s infinite;
+            `;
+        } else {
+            b.style.cssText = `
+                position: absolute;
+                bottom: -150px;
+                left: ${10 + Math.random() * 80}%;
+                width: ${size}px;
+                height: ${size * 1.2}px;
+                background: ${color};
+                border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+                cursor: pointer;
+                box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.1);
+                transition: opacity 0.2s;
+                z-index: 5;
+                padding: 20px;
+                margin: -20px;
+            `;
+            
+            const gloss = document.createElement('div');
+            gloss.style.cssText = `position: absolute; top: 15%; left: 20%; width: 25%; height: 15%; background: rgba(255,255,255,0.4); border-radius: 50%; transform: rotate(-30deg); pointer-events: none;`;
+            b.appendChild(gloss);
+            
+            const string = document.createElement('div');
+            string.style.cssText = `position: absolute; bottom: -30px; left: 50%; width: 2px; height: 40px; background: rgba(0,0,0,0.15); transform: translateX(-50%); pointer-events: none;`;
+            b.appendChild(string);
+        }
         
         b.onclick = (e) => {
             e.stopPropagation();
             this.createMuzzleFlash(e.clientX, e.clientY);
-            this.popBalloon(b);
+            if (isStar) {
+                this.addScore(1);
+                this.showToast('STJÄRNA! ⭐+1');
+                this.popCount += 5; // Stars count as 5 balloons
+                const countEl = document.getElementById('pop-count');
+                if (countEl) countEl.innerText = this.popCount;
+                b.remove();
+            } else {
+                this.popBalloon(b);
+            }
         };
         
         area.appendChild(b);
@@ -138,7 +162,7 @@ Object.assign(App.prototype, {
         const speed = 1.2 + Math.random() * 1.5 + (this.state.difficulty * 0.4) + (this.popCount * 0.05);
         let drift = (Math.random() - 0.5) * 1.5;
         let pos = -150;
-        const sizePct = (size / 800) * 100; // Container is 800px wide
+        const sizePct = (size / 800) * 100;
         
         const move = () => {
             if (!this.popActive || !b.parentNode || this.state.currentScreen !== 'game-pop') {
@@ -149,26 +173,18 @@ Object.assign(App.prototype, {
             b.style.bottom = pos + 'px';
             
             let currentLeft = parseFloat(b.style.left) + drift;
-            
-            // Bounce against edges
-            if (currentLeft <= 0) {
-                currentLeft = 0;
-                drift = Math.abs(drift); // Bounce right
-            } else if (currentLeft + sizePct >= 100) {
-                currentLeft = 100 - sizePct;
-                drift = -Math.abs(drift); // Bounce left
-            }
+            if (currentLeft <= 0) { currentLeft = 0; drift = Math.abs(drift); }
+            else if (currentLeft + sizePct >= 100) { currentLeft = 100 - sizePct; drift = -Math.abs(drift); }
             
             b.style.left = currentLeft + '%';
             
             if (pos > 600) {
                 b.remove();
-                this.popLives--;
-                this.updatePopLivesDisplay();
-                if (this.popLives <= 0) {
-                    this.showPopEnd(false);
-                } else {
-                    this.showToast('Hoppsan! En ballong slapp undan! ❤️');
+                if (!isStar) {
+                    this.popLives--;
+                    this.updatePopLivesDisplay();
+                    if (this.popLives <= 0) this.showPopEnd(false);
+                    else this.showToast('Hoppsan! En ballong slapp undan! ❤️');
                 }
             } else {
                 requestAnimationFrame(move);

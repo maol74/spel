@@ -11,7 +11,11 @@ class App {
             progress: '1 / 20',
             purchasedItems: [],
             lastSpinDate: null,
-            badges: []
+            badges: [],
+            dailyQuests: [],
+            lastQuestDate: null,
+            unlockedPowers: [],
+            bedtimeMode: false
         };
         this.screens = {};
         this.guessedLetters = [];
@@ -178,6 +182,24 @@ class App {
         }
     }
 
+    addScore(points) {
+        if (!points) return;
+        this.state.score += points;
+        this.saveState();
+        
+        document.querySelectorAll('.hud-stats span:last-child').forEach(el => {
+            el.innerText = this.state.score;
+        });
+        
+        document.querySelectorAll('.hud-stats').forEach(el => {
+            el.style.transform = 'scale(1.2)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+        });
+
+        this.cheer(points > 50 ? 'jump' : 'wave');
+        if (this.state.score >= 100) this.completeQuest('stars');
+    }
+
     showScreen(screenId, updateHash = true) {
         if (this.state.currentScreen === 'admin-menu' && screenId !== 'admin-menu') {
             this._adminAuthenticated = false;
@@ -226,14 +248,33 @@ class App {
                 this.updateAdminScreen();
             }
             if (screenId === 'user-select' && this.updateUserSelectScreen) this.updateUserSelectScreen();
-            if (screenId === 'main-menu' && this.updateMainMenuScreen) this.updateMainMenuScreen();
-            if (screenId === 'shop' && this.updateShopScreen) this.updateShopScreen();
+            if (screenId === 'main-menu' && this.updateMainMenuScreen) {
+                this.generateDailyQuests();
+                this.updateMainMenuScreen();
+            }
+            if (screenId === 'shop' && this.updateShopScreen) {
+                this.updateShopScreen();
+                this.completeQuest('shop');
+            }
+            if (screenId === 'profile-screen' && this.renderProfileScreen) this.renderProfileScreen();
+            if (screenId === 'wheel-screen' && this.renderWheelScreen) {
+                this.renderWheelScreen();
+                this.completeQuest('spin');
+            }
+            if (screenId === 'creator-screen' && this.initCreatorScreen) {
+                this.initCreatorScreen();
+                this.completeQuest('draw');
+            }
             if (screenId === 'math-menu' && this.updateMathMenuScreen) this.updateMathMenuScreen();
             if (screenId === 'dots-menu' && this.updateDotsMenuScreen) this.updateDotsMenuScreen();
             if (screenId === 'penguin-menu' && this.updatePenguinMenuScreen) this.updatePenguinMenuScreen();
             if (screenId === 'feed-menu' && this.updateFeedMenuScreen) this.updateFeedMenuScreen();
             if (screenId === 'avatar-select' && this.updateAvatarSelectScreen) this.updateAvatarSelectScreen();
             if (screenId === 'difficulty-select' && this.updateDifficultySelectScreen) this.updateDifficultySelectScreen();
+            if (screenId === 'stories' && this.updateStoriesScreen) {
+                this.updateStoriesScreen();
+                this.completeQuest('story');
+            }
             if (screenId === 'game-stava' && this.renderStava) { 
                 this.currentWord = null; 
                 this.currentGuessedCount = 0; 
@@ -241,21 +282,23 @@ class App {
             }
             if (screenId === 'game-hitta' && this.initHittaGame) this.initHittaGame();
             if (screenId === 'game-adventure' && this.initAdventureGame) this.initAdventureGame();
+            
             if (screenId === 'game-math-penguin' && !this._initializingMath && this.initMathGame) {
                 this._initializingMath = true;
-                this.initMathGame(this.mathMode || 'count');
+                this.initMathGame('count');
                 this._initializingMath = false;
             }
-            if (screenId === 'game-math-feed' && !this._initializingFeed && this.initMathFeedGame) {
-                this._initializingFeed = true;
-                this.initMathFeedGame(this.feedMode || 'count');
-                this._initializingFeed = false;
+            if (screenId === 'game-math-feed' && !this._initializingMath && this.initMathGame) {
+                this._initializingMath = true;
+                this.initMathGame('feed');
+                this._initializingMath = false;
             }
-            if (screenId === 'game-math-dots' && !this._initializingDots && this.initMathDotsGame) {
-                this._initializingDots = true;
-                this.initMathDotsGame(this.dotsMode || 'count');
-                this._initializingDots = false;
+            if (screenId === 'game-math-dots' && !this._initializingMath && this.initMathGame) {
+                this._initializingMath = true;
+                this.initMathGame('dots');
+                this._initializingMath = false;
             }
+
             if (screenId === 'stories' && this.renderStoriesList) this.renderStoriesList();
             if (screenId === 'spel-menu' && this.updateSpelMenuScreen) this.updateSpelMenuScreen();
             if (screenId === 'letter-menu' && this.updateLetterMenuScreen) this.updateLetterMenuScreen();
@@ -270,7 +313,6 @@ class App {
             if (screenId === 'game-rabbla' && this.initGameRabbla) this.initGameRabbla();
             if (screenId === 'game-ljuda' && this.initGameLjuda) this.initGameLjuda();
             
-            // New screens
             if (screenId === 'profile-screen' && this.renderProfileScreen) this.renderProfileScreen();
             if (screenId === 'wheel-screen' && this.renderWheelScreen) this.renderWheelScreen();
             if (screenId === 'creator-screen' && this.initCreatorScreen) this.initCreatorScreen();
@@ -366,21 +408,50 @@ class App {
         }, d);
     }
 
-    addScore(points) {
-        if (!points) return;
-        this.state.score += points;
-        this.saveState();
-        
-        document.querySelectorAll('.hud-stats span:last-child').forEach(el => {
-            el.innerText = this.state.score;
-        });
-        
-        document.querySelectorAll('.hud-stats').forEach(el => {
-            el.style.transform = 'scale(1.2)';
-            setTimeout(() => el.style.transform = 'scale(1)', 200);
-        });
+    generateDailyQuests() {
+        const today = new Date().toDateString();
+        if (this.state.lastQuestDate === today && this.state.dailyQuests.length > 0) return;
 
-        this.cheer(points > 50 ? 'jump' : 'wave');
+        const pool = [
+            { id: 'spin', text: 'Snurra Lyckohjulet 🎡', reward: 50 },
+            { id: 'draw', text: 'Rita i Skaparlådan 🎨', reward: 30 },
+            { id: 'pop', text: 'Poppa 10 ballonger 🎈', reward: 40 },
+            { id: 'story', text: 'Läs en saga 📖', reward: 30 },
+            { id: 'shop', text: 'Besök butiken 🛒', reward: 10 },
+            { id: 'stars', text: 'Samla 100 stjärnor ⭐', reward: 60 }
+        ];
+
+        // Pick 3 random
+        const shuffled = pool.sort(() => 0.5 - Math.random());
+        this.state.dailyQuests = shuffled.slice(0, 3).map(q => ({ ...q, done: false }));
+        this.state.lastQuestDate = today;
+        this.saveState();
+    }
+
+    completeQuest(id) {
+        const quest = this.state.dailyQuests.find(q => q.id === id && !q.done);
+        if (quest) {
+            quest.done = true;
+            this.addScore(quest.reward);
+            this.showToast(`UPPDRAG KLART! +${quest.reward} stjärnor 🌟🏆`, 4000);
+            this.saveState();
+            if (this.state.currentScreen === 'main-menu') this.updateMainMenuScreen();
+        }
+    }
+
+    toggleBedtimeMode() {
+        this.state.bedtimeMode = !this.state.bedtimeMode;
+        this.applyBedtimeMode();
+        this.saveState();
+        this.showToast(this.state.bedtimeMode ? 'God natt! 🌙 Sovläge aktiverat.' : 'God morgon! ☀️ Vanligt läge.', 3000);
+    }
+
+    applyBedtimeMode() {
+        if (this.state.bedtimeMode) {
+            document.body.classList.add('bedtime-theme');
+        } else {
+            document.body.classList.remove('bedtime-theme');
+        }
     }
 }
 

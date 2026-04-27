@@ -42,14 +42,25 @@ Object.assign(App.prototype, {
 
     handleJump() { 
         if (this.adventurePlayer && !this.adventurePlayer.jumping && this.adventureGameActive) { 
-            this.adventurePlayer.dy = -15; 
+            // Hero Power: Superhopp (Level 5+)
+            const jumpPower = this.state.level >= 5 ? -18 : -15;
+            this.adventurePlayer.dy = jumpPower; 
             this.adventurePlayer.jumping = true; 
+            if (this.state.level >= 5) this.showToast('SUPERHOPP! 🚀');
         } 
     },
 
     handleShoot() {
         if (this.state.currentScreen === 'game-adventure' && this.adventureProjectiles && this.adventureGameActive) {
-            this.adventureProjectiles.push({ x: this.adventurePlayer.x + 40, y: this.adventurePlayer.y + 20, w: 20, h: 8 });
+            // Hero Power: Trippelskott (Level 10+)
+            if (this.state.level >= 10) {
+                this.adventureProjectiles.push({ x: this.adventurePlayer.x + 40, y: this.adventurePlayer.y + 10, w: 20, h: 8 });
+                this.adventureProjectiles.push({ x: this.adventurePlayer.x + 40, y: this.adventurePlayer.y + 20, w: 20, h: 8 });
+                this.adventureProjectiles.push({ x: this.adventurePlayer.x + 40, y: this.adventurePlayer.y + 30, w: 20, h: 8 });
+                this.showToast('TRIPPELSKOTT! 🔥🔥🔥');
+            } else {
+                this.adventureProjectiles.push({ x: this.adventurePlayer.x + 40, y: this.adventurePlayer.y + 20, w: 20, h: 8 });
+            }
         }
     },
 
@@ -175,6 +186,14 @@ Object.assign(App.prototype, {
                             obstacles.splice(i, 1);
                             continue;
                         }
+                        if (o.type === 'star') {
+                            score += 10;
+                            if (hud) hud.innerText = score;
+                            this.addScore(1);
+                            this.showToast('STJÄRNA! ⭐+1');
+                            obstacles.splice(i, 1);
+                            continue;
+                        }
                         if (o.type === 'heart') {
                             if (this.adventureLives < 5) {
                                 this.adventureLives++;
@@ -206,7 +225,7 @@ Object.assign(App.prototype, {
                         }
                     }
                     
-                    if (!o.passed && o.x < p.x) {
+                    if (!o.passed && o.x < p.x && !['treasure', 'star', 'heart'].includes(o.type)) {
                         o.passed = true;
                         score += 5;
                         if (hud) hud.innerText = score;

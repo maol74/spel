@@ -120,30 +120,36 @@ Object.assign(App.prototype, {
         const area = document.getElementById('race-area');
         if (!area) return;
         
-        const t = document.createElement('div');
-        const isHeart = Math.random() < 0.1;
+        const rand = Math.random();
+        const isHeart = rand < 0.08;
+        const isStar = !isHeart && rand < 0.25;
         const colors = ['#3498DB', '#2ECC71', '#F1C40F', '#9B59B6', '#E67E22'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
+        const t = document.createElement('div');
         t.style.cssText = `
             position: absolute;
             top: -120px;
             left: ${25 + Math.random() * 300}px;
             width: 50px;
-            height: ${isHeart ? '50px' : '90px'};
-            background: ${isHeart ? 'transparent' : color};
+            height: ${(isHeart || isStar) ? '50px' : '90px'};
+            background: ${(isHeart || isStar) ? 'transparent' : color};
             border-radius: 10px;
-            border: ${isHeart ? 'none' : '2px solid rgba(0,0,0,0.3)'};
+            border: ${(isHeart || isStar) ? 'none' : '2px solid rgba(0,0,0,0.3)'};
             z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: ${isHeart ? '2.5rem' : '1rem'};
+            font-size: ${(isHeart || isStar) ? '2.5rem' : '1rem'};
         `;
         
         if (isHeart) {
             t.innerText = '❤️';
             t.dataset.type = 'heart';
+        } else if (isStar) {
+            t.innerText = '⭐';
+            t.dataset.type = 'star';
+            t.style.filter = 'drop-shadow(0 0 10px #F1C40F)';
         } else {
             const glass = document.createElement('div');
             glass.style.cssText = `position: absolute; top: 15%; left: 5px; right: 5px; height: 25px; background: rgba(0,0,0,0.5); border-radius: 5px;`;
@@ -185,6 +191,9 @@ Object.assign(App.prototype, {
                             this.raceTimeLeft += 5;
                             this.showToast('BONUSTID! ⏱️');
                         }
+                    } else if (t.dataset.type === 'star') {
+                        this.addScore(1);
+                        this.showToast('STJÄRNA! ⭐+1');
                     } else {
                         this.handleRaceCrash();
                     }

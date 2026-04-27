@@ -145,9 +145,24 @@ Object.assign(App.prototype, {
 
     updateMainMenuScreen() {
         const div = this.screens['main-menu'];
+        const quests = this.state.dailyQuests || [];
+        
         div.innerHTML = `
             ${this.getHUD()}
-            <h1>Hej ${this.state.user ? this.state.user.name : 'där'}! 👋</h1>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+                <h1 style="margin: 0;">Hej ${this.state.user ? this.state.user.name : 'där'}! 👋</h1>
+                <div id="daily-quests-box" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px; width: 300px; text-align: left; border: 2px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 0.8rem; color: #A0AEC0; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Dagens Uppdrag 🎯</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${quests.map(q => `
+                            <div style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: ${q.done ? '#2ECC71' : 'white'}; opacity: ${q.done ? 0.6 : 1};">
+                                <span>${q.done ? '✅' : '⭕'}</span>
+                                <span style="${q.done ? 'text-decoration: line-through' : ''}">${q.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
             <div class="menu-grid">
                 <div class="menu-card active-orange" onclick="window.gameApp.showScreen('spel-menu')">
                     <div class="menu-card-icon">🎮</div>

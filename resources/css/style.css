@@ -460,6 +460,31 @@ h1 {
     }
 }
 
+/* Bedtime Theme */
+body.bedtime-theme {
+    filter: sepia(0.3) brightness(0.8) contrast(0.9);
+    background-color: #0F172A;
+}
+
+body.bedtime-theme .hud-bar, 
+body.bedtime-theme .game-card, 
+body.bedtime-theme .menu-card {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: #334155;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+body.bedtime-theme h1, 
+body.bedtime-theme .menu-card-title {
+    color: #94A3B8 !important;
+}
+
+body.bedtime-theme .cheerleader-bubble {
+    background: #1E293B;
+    color: #94A3B8;
+    border-color: #334155;
+}
+
 @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.7; transform: scale(0.95); }
