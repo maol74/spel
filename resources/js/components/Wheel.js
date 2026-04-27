@@ -67,23 +67,26 @@ Object.assign(App.prototype, {
         const randomIndex = Math.floor(Math.random() * segments.length);
         const prize = segments[randomIndex];
         
-        const targetRotation = 3600 + (randomIndex * 45) + 22.5;
+        // Target is just for logic, we use speed and friction for movement
         let currentRotation = 0;
-        let speed = 25; // Starting speed
-        let lastTime = performance.now();
+        let speed = 30; 
+        let lastTime = 0;
         
         const animate = (time) => {
-            if (!document.getElementById('wheel-container')) return;
-            
-            const dt = (time - lastTime) / 16.66; // Delta time normalized
+            if (!lastTime) lastTime = time;
+            const dt = Math.min((time - lastTime) / 16.66, 2); 
             lastTime = time;
+
+            const wheelEl = document.getElementById('wheel-container');
+            if (!wheelEl || this.state.currentScreen !== 'wheel-screen') return;
             
             // Decelerate
-            speed *= 0.985;
+            speed *= 0.988;
             currentRotation += speed * dt;
             
-            // Centrifugal force effect on avatars
-            const extraRadius = speed * 0.8; // Move out based on speed
+            // Centrifugal force: move avatars radially
+            // Max extra radius 15, goes to 0 as speed goes to 0
+            const extraRadius = Math.min(speed * 0.6, 18); 
             const baseRadius = 20;
             const currentRadius = baseRadius + extraRadius;
 
@@ -95,17 +98,19 @@ Object.assign(App.prototype, {
                     const y = 50 + currentRadius * Math.sin(angle);
                     avatar.setAttribute('x', x);
                     avatar.setAttribute('y', y);
-                    // Also update the rotation transform origin to keep them oriented
                     avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
                 }
             }
 
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
+            wheelEl.style.transform = `rotate(${currentRotation}deg)`;
             
-            if (speed > 0.1) {
+            if (speed > 0.15) {
                 requestAnimationFrame(animate);
             } else {
-                // Done!
+                // Snapped to final result
+                const finalOffset = (randomIndex * 45) + 22.5;
+                // We don't snap rotation to keep it look natural, just show result
+                
                 this.state.lastSpinDate = new Date().toDateString();
                 this.addScore(prize);
                 this.saveState();
@@ -118,6 +123,19 @@ Object.assign(App.prototype, {
                     </div>
                 `;
                 this.showToast(`GRATTIS! +${prize} ⭐`, 3000);
+
+                // Ensure avatars are back at baseRadius
+                for (let i = 0; i < 8; i++) {
+                    const avatar = document.getElementById(`wheel-avatar-${i}`);
+                    if (avatar) {
+                        const angle = (i + 0.5) * Math.PI / 4;
+                        const x = 50 + baseRadius * Math.cos(angle);
+                        const y = 50 + baseRadius * Math.sin(angle);
+                        avatar.setAttribute('x', x);
+                        avatar.setAttribute('y', y);
+                        avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
+                    }
+                }
             }
         };
         
