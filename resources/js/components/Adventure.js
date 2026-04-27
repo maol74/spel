@@ -124,15 +124,17 @@ Object.assign(App.prototype, {
                 const rand = Math.random();
                 if (rand < 0.1) {
                     obstacles.push({ x: 800, y: 150 + Math.random() * 150, w: 45, h: 45, type: 'treasure', icon: '💎', size: 45 });
-                } else if (rand < 0.4) {
+                } else if (rand < 0.25) { // 15% chance for stars
+                    obstacles.push({ x: 800, y: 150 + Math.random() * 150, w: 40, h: 40, type: 'star', icon: '⭐', size: 40 });
+                } else if (rand < 0.45) {
                     const size = 30 + Math.random() * 50;
                     obstacles.push({ x: 800, y: 340 - size, w: size, h: size, type: 'animal', icon: animalEmojis[Math.floor(Math.random() * animalEmojis.length)], size: size });
                 } else if (rand < 0.6) {
                     obstacles.push({ x: 800, y: 340, w: 80, h: 60, type: 'pit', icon: '🕳️', size: 40 });
-                } else if (rand < 0.8) {
+                } else if (rand < 0.75) {
                     const size = 30 + Math.random() * 40;
                     obstacles.push({ x: 800, y: 120 + Math.random() * 100, w: size, h: size, type: 'bird', icon: birdEmojis[Math.floor(Math.random() * birdEmojis.length)], size: size });
-                } else if (rand < 0.85) {
+                } else if (rand < 0.8) {
                     obstacles.push({ x: 800, y: 150 + Math.random() * 100, w: 40, h: 40, type: 'heart', icon: '❤️', size: 40 });
                 } else {
                     const size = 30 + Math.random() * 40;
