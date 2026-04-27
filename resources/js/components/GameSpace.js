@@ -48,29 +48,31 @@ Object.assign(App.prototype, {
         this.spaceCount = 0;
         this.spaceLives = 3;
         
-        const container = document.getElementById('space-container');
-        const ship = document.getElementById('ship');
-        const speedHud = document.getElementById('space-speed');
-        
-        const moveHandler = (e) => {
-            if (!this.spaceActive) return;
+        this._spaceMoveHandler = (e) => {
+            if (!this.spaceActive || this.state.currentScreen !== 'game-space') return;
+            const container = document.getElementById('space-container');
+            if (!container) return;
             const rect = container.getBoundingClientRect();
-            let x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            let x = clientX - rect.left;
             if (x < 40) x = 40;
             if (x > 560) x = 560;
+            const ship = document.getElementById('ship');
             if (ship) ship.style.left = x + 'px';
         };
 
-        container.onmousemove = moveHandler;
-        container.ontouchmove = (e) => {
-            moveHandler(e);
-            e.preventDefault();
-        };
+        window.removeEventListener('mousemove', this._spaceMoveHandler);
+        window.removeEventListener('touchmove', this._spaceMoveHandler);
+        window.addEventListener('mousemove', this._spaceMoveHandler);
+        window.addEventListener('touchmove', this._spaceMoveHandler, { passive: false });
 
-        container.onclick = (e) => {
-            if (!this.spaceActive) return;
-            this.shootSpaceBullet();
-        };
+        const containerEl = document.getElementById('space-container');
+        if (containerEl) {
+            containerEl.onclick = (e) => {
+                if (!this.spaceActive) return;
+                this.shootSpaceBullet();
+            };
+        }
 
         window.onkeydown = (e) => {
             if (!this.spaceActive || this.state.currentScreen !== 'game-space') return;
