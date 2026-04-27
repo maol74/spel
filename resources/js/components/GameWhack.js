@@ -15,12 +15,12 @@ Object.assign(App.prototype, {
                     ❤️❤️❤️
                 </div>
 
-                <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; z-index: 10;">
-                    <div style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.9rem; border: 2px solid #3498DB;">
-                        FART: <span id="whack-speed">0.0</span>
-                    </div>
+                <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: row; gap: 15px; align-items: center; z-index: 10;">
                     <div id="whack-score" style="background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; color: white; font-weight: bold; font-size: 1.2rem; border: 2px solid #F1C40F; backdrop-filter: blur(5px);">
                         POFFADE: <span id="whack-count">0</span> / 20
+                    </div>
+                    <div style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.9rem; border: 2px solid #3498DB;">
+                        FART: <span id="whack-speed">0.0</span>
                     </div>
                 </div>
 
