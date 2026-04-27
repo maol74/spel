@@ -20,7 +20,8 @@ Object.assign(App.prototype, {
         this.isHittaMoving = this.isHittaMoving || false;
         div.innerHTML = `
             ${this.getHUD()}
-            <div class="game-card">
+            <div class="game-card" style="position: relative;">
+                ${this.getBackButton('letter-menu')}
                 <h2 style="color: #4A90E2; text-align:center;">Hitta <span id="hitta-count">${this.lettersToFind}</span> stycken ${targetBase}! (Både ${targetBase} och ${targetBase.toLowerCase()})</h2>
                 
                 <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">

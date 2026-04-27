@@ -85,17 +85,23 @@ Object.assign(App.prototype, {
                 // Set tool properties
                 ctx.strokeStyle = this.paintColor;
                 ctx.lineJoin = 'round';
-                ctx.lineWidth = this.brushSize;
                 
                 if (this.brushType === 'pen') {
                     ctx.lineCap = 'round';
                     ctx.globalAlpha = 1.0;
+                    ctx.lineWidth = this.brushSize * 0.6; // Thinner for pen
+                    ctx.shadowBlur = 0;
                 } else if (this.brushType === 'brush') {
                     ctx.lineCap = 'round';
-                    ctx.globalAlpha = 1.0;
+                    ctx.globalAlpha = 0.8;
+                    ctx.lineWidth = this.brushSize;
+                    ctx.shadowBlur = this.brushSize / 2; // Soft edge
+                    ctx.shadowColor = this.paintColor;
                 } else if (this.brushType === 'marker') {
                     ctx.lineCap = 'square';
                     ctx.globalAlpha = 0.4;
+                    ctx.lineWidth = this.brushSize * 1.5; // Extra wide
+                    ctx.shadowBlur = 0;
                 }
             } else if (this.paintMode === 'sticker' && this.selectedSticker) {
                 ctx.globalAlpha = 1.0;
@@ -115,9 +121,14 @@ Object.assign(App.prototype, {
 
         const stopPaint = () => {
             this.isPainting = false;
-            // Reset alpha so it doesn't affect other things if we don't reset it
+            // Reset state so it doesn't affect other things
             const canvas = document.getElementById('creator-canvas');
-            if (canvas) canvas.getContext('2d').globalAlpha = 1.0;
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.globalAlpha = 1.0;
+                ctx.shadowBlur = 0;
+                ctx.shadowColor = 'transparent';
+            }
         };
 
         canvas.onmousedown = startPaint;

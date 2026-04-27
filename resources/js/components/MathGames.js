@@ -323,42 +323,56 @@ Object.assign(App.prototype, {
         }
 
         const distractors = [];
-        for (let i = 0; i < 10; i++) {
+        let distractorAttempts = 0;
+        while (distractors.length < 10 && distractorAttempts < 50) {
+            distractorAttempts++;
             const dx = Math.random() * 340 + 30;
             const dy = Math.random() * 340 + 30;
-            const tooClose = pattern.points.some(p => Math.sqrt(Math.pow(p[0]-dx, 2) + Math.pow(p[1]-dy, 2)) < 40);
+            const tooClose = pattern.points.some(p => Math.sqrt(Math.pow(p[0]-dx, 2) + Math.pow(p[1]-dy, 2)) < 35);
+            
             if (!tooClose) {
+                // Find a number not in dotValues or distractors
                 let num;
-                do { num = Math.floor(Math.random() * maxRes) + 1; } while (this.dotValues.includes(num));
-                distractors.push({ x: dx, y: dy, num });
+                let numAttempts = 0;
+                do {
+                    num = Math.floor(Math.random() * Math.max(maxRes, this.dotValues.length + 20)) + 1;
+                    numAttempts++;
+                } while ((this.dotValues.includes(num) || distractors.some(d => d.num === num)) && numAttempts < 100);
+                
+                if (numAttempts < 100) {
+                    distractors.push({ x: dx, y: dy, num });
+                }
             }
         }
 
+        const colors = ['#FF6B6B', '#4CAF50', '#3498DB', '#9B59B6', '#E67E22', '#E91E63', '#2196F3', '#FF9800'];
+        this.dotsColor = colors[Math.floor(Math.random() * colors.length)];
+        
         div.innerHTML = `
             ${this.getHUD()}
-            <div class="game-card" style="background: #E8F5E9; min-height: 580px; text-align: center; position: relative;">
-                <div id="dots-progress" style="position: absolute; top: 20px; right: 40px; background: white; padding: 10px 20px; border-radius: 20px; color: #2E7D32; font-weight: bold; font-size: 1.2rem; border: 2px solid #4CAF50; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <div class="game-card" style="background: #F1F8E9; min-height: 580px; text-align: center; position: relative;">
+                <div id="dots-progress" style="position: absolute; top: 20px; right: 40px; background: white; padding: 10px 20px; border-radius: 20px; color: ${this.dotsColor}; font-weight: bold; font-size: 1.2rem; border: 2px solid ${this.dotsColor}; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     FIGURER: <span id="dots-round-text">${this.dotsRound}</span> / ${this.dotsTotal}
                 </div>
-                <h2 style="color: #2E7D32; margin-top: 10px;">Prick till Prick: ${pattern.name}</h2>
-                <div id="dots-problem-box" style="background: white; padding: 20px 40px; border-radius: 30px; display: inline-block; border: 4px solid #4CAF50;">
-                    <p style="color: #2E7D32; font-weight: bold; font-size: 1.4rem; margin:0;">Vad blir det här?</p>
+                <h2 style="color: ${this.dotsColor}; margin-top: 10px;">Prick till Prick: ${pattern.name}</h2>
+                <div id="dots-problem-box" style="background: white; padding: 20px 40px; border-radius: 30px; display: inline-block; border: 4px solid ${this.dotsColor};">
+                    <p style="color: ${this.dotsColor}; font-weight: bold; font-size: 1.4rem; margin:0;">Vad blir det här?</p>
                     <div id="dots-target-text" style="font-size: 3.5rem; color: #E91E63; font-weight: 900; margin: 10px 0;">...</div>
                 </div>
-                <div id="dots-area" style="position: relative; width: 400px; height: 400px; margin: 20px auto; background: white; border-radius: 20px; border: 4px solid #A5D6A7;">
+                <div id="dots-area" style="position: relative; width: 400px; height: 400px; margin: 20px auto; background: white; border-radius: 20px; border: 4px solid ${this.dotsColor}33;">
                     <svg id="dots-svg" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></svg>
                     
                     ${distractors.map((d, i) => `
                         <div class="dot-point distractor" style="position: absolute; left: ${d.x}px; top: ${d.y}px; transform: translate(-50%, -50%);" onclick="window.gameApp.handleFakeDotClick(this)">
-                            <div style="width: 35px; height: 35px; background: #FFF; border: 3px solid #4CAF50; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #2E7D32; cursor: pointer;">
+                            <div style="width: 35px; height: 35px; background: #FFF; border: 3px solid ${this.dotsColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: ${this.dotsColor}; cursor: pointer;">
                                 ${d.num}
                             </div>
                         </div>
                     `).join('')}
-
+ 
                     ${pattern.points.map((p, i) => `
                         <div class="dot-point" id="dot-${i}" style="position: absolute; left: ${p[0]}px; top: ${p[1]}px; transform: translate(-50%, -50%);" onclick="window.gameApp.handleDotClick(${i})">
-                            <div style="width: 35px; height: 35px; background: #FFF; border: 3px solid #4CAF50; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #2E7D32; cursor: pointer;">
+                            <div style="width: 35px; height: 35px; background: #FFF; border: 3px solid ${this.dotsColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: ${this.dotsColor}; cursor: pointer;">
                                 ${this.dotValues[i]}
                             </div>
                         </div>
@@ -403,7 +417,7 @@ Object.assign(App.prototype, {
             const m = this.dotsMode === 'sub' ? 2 : (this.dotsMode === 'mult' ? 3 : 1);
             this.addScore(1 * m);
             const dotEl = document.querySelector(`#dot-${index} > div`);
-            if (dotEl) { dotEl.style.background = '#4CAF50'; dotEl.style.color = 'white'; }
+            if (dotEl) { dotEl.style.background = this.dotsColor; dotEl.style.color = 'white'; }
             this.updateDotsProblem();
             if (index > 0) {
                 const prev = this.currentDotsPattern.points[index - 1]; const cur = this.currentDotsPattern.points[index];
@@ -412,7 +426,7 @@ Object.assign(App.prototype, {
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                     line.setAttribute('x1', prev[0]); line.setAttribute('y1', prev[1]);
                     line.setAttribute('x2', cur[0]); line.setAttribute('y2', cur[1]);
-                    line.setAttribute('stroke', '#4CAF50'); line.setAttribute('stroke-width', '4');
+                    line.setAttributeNS(null, 'style', `stroke:${this.dotsColor}; stroke-width:6; stroke-linecap:round; transition: all 0.3s;`);
                     svg.appendChild(line);
                 }
             }
@@ -421,7 +435,7 @@ Object.assign(App.prototype, {
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', this.currentDotsPattern.points[index][0]); line.setAttribute('y1', this.currentDotsPattern.points[index][1]);
                 line.setAttribute('x2', this.currentDotsPattern.points[0][0]); line.setAttribute('y2', this.currentDotsPattern.points[0][1]);
-                line.setAttribute('stroke', '#4CAF50'); line.setAttribute('stroke-width', '6'); svg.appendChild(line);
+                line.setAttributeNS(null, 'style', `stroke:${this.dotsColor}; stroke-width:8; stroke-linecap:round;`); svg.appendChild(line);
                 setTimeout(() => { 
                     this.showToast('MAGISKT! ❤️'); 
                     const m = this.dotsMode === 'sub' ? 2 : (this.dotsMode === 'mult' ? 3 : 1);

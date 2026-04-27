@@ -135,7 +135,8 @@ class App {
             'math-menu', 'game-math-penguin', 'game-math-feed', 
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
             'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen',
-            'profile-screen', 'wheel-screen', 'creator-screen'
+            'profile-screen', 'wheel-screen', 'creator-screen',
+            'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
         ];
         ids.forEach(id => {
             this.screens[id] = document.getElementById(id);
@@ -143,6 +144,7 @@ class App {
     }
 
     handleHashChange() {
+        if (this._blockHashChange) return;
         const hash = window.location.hash.replace('#', '');
         if (hash && this.screens[hash]) {
             if (!this.state.user && hash !== 'user-select' && hash !== 'loading-screen' && hash !== 'admin-menu' && hash !== 'password-screen') {
@@ -169,9 +171,18 @@ class App {
                 'stories': 'main-menu',
                 'game-stava': 'word-menu',
                 'game-ljuda': 'word-menu',
+                'game-rim': 'word-menu',
+                'game-mening': 'word-menu',
+                'game-gomma': 'word-menu',
                 'game-hitta': 'letter-menu',
                 'game-memory': 'letter-menu',
                 'game-rabbla': 'letter-menu',
+                'game-forsta': 'letter-menu',
+                'game-vokal': 'letter-menu',
+                'game-mala': 'letter-menu',
+                'game-vag': 'math-menu',
+                'game-monster': 'math-menu',
+                'game-klocka': 'math-menu',
                 'letter-menu': 'main-menu',
                 'word-menu': 'main-menu',
                 'game-adventure': 'main-menu',
@@ -221,15 +232,25 @@ class App {
         if (screen) {
             screen.classList.remove('hidden');
             this.state.currentScreen = screenId;
+            
             if (updateHash) {
-                if (window.history && window.history.replaceState) {
+                // Special handling for file:// protocol to avoid CORS/Security errors
+                if (window.location.protocol === 'file:') {
+                    this._blockHashChange = true;
+                    window.location.hash = screenId;
+                    setTimeout(() => this._blockHashChange = false, 100);
+                } else if (window.history && window.history.replaceState) {
                     window.history.replaceState(null, null, '#' + screenId);
                 } else {
                     window.location.hash = screenId;
                 }
             }
 
-            const gameScreens = ['game-stava', 'game-hitta', 'game-adventure', 'game-math-penguin', 'game-math-feed', 'game-math-dots', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-memory'];
+            const gameScreens = [
+                'game-stava', 'game-hitta', 'game-adventure', 'game-math-penguin', 'game-math-feed', 'game-math-dots', 
+                'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-memory',
+                'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
+            ];
             if (gameScreens.includes(screenId)) {
                 // If entering a NEW game from a menu, reset progress to 1
                 if (!gameScreens.includes(this._lastScreen)) {
@@ -266,6 +287,9 @@ class App {
                 this.completeQuest('draw');
             }
             if (screenId === 'math-menu' && this.updateMathMenuScreen) this.updateMathMenuScreen();
+            if (screenId === 'game-vag' && this.initVagGame) this.initVagGame();
+            if (screenId === 'game-monster' && this.initMonsterGame) this.initMonsterGame();
+            if (screenId === 'game-klocka' && this.initKlockaGame) this.initKlockaGame();
             if (screenId === 'dots-menu' && this.updateDotsMenuScreen) this.updateDotsMenuScreen();
             if (screenId === 'penguin-menu' && this.updatePenguinMenuScreen) this.updatePenguinMenuScreen();
             if (screenId === 'feed-menu' && this.updateFeedMenuScreen) this.updateFeedMenuScreen();
@@ -293,10 +317,8 @@ class App {
                 this.initMathGame('feed');
                 this._initializingMath = false;
             }
-            if (screenId === 'game-math-dots' && !this._initializingMath && this.initMathGame) {
-                this._initializingMath = true;
-                this.initMathGame('dots');
-                this._initializingMath = false;
+            if (screenId === 'game-math-dots' && this.initMathDotsGame) {
+                // Do nothing here, it's handled by initMathDotsGame call directly from menu
             }
 
             if (screenId === 'stories' && this.renderStoriesList) this.renderStoriesList();
@@ -310,8 +332,14 @@ class App {
             if (screenId === 'game-space' && this.initGameSpace) this.initGameSpace();
             if (screenId === 'game-bubble' && this.initGameBubble) this.initGameBubble();
             if (screenId === 'game-memory' && this.initGameMemory) this.initGameMemory();
+            if (screenId === 'game-forsta' && this.initFirstLetterGame) this.initFirstLetterGame();
+            if (screenId === 'game-vokal' && this.initVokalGame) this.initVokalGame();
+            if (screenId === 'game-mala' && this.initMalaGame) this.initMalaGame();
             if (screenId === 'game-rabbla' && this.initGameRabbla) this.initGameRabbla();
             if (screenId === 'game-ljuda' && this.initGameLjuda) this.initGameLjuda();
+            if (screenId === 'game-mening' && this.initMeningGame) this.initMeningGame();
+            if (screenId === 'game-gomma' && this.initGommaGame) this.initGommaGame();
+            if (screenId === 'game-rim' && this.initRimGame) this.initRimGame();
             
             if (screenId === 'profile-screen' && this.renderProfileScreen) this.renderProfileScreen();
             if (screenId === 'wheel-screen' && this.renderWheelScreen) this.renderWheelScreen();

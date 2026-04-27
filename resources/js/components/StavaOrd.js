@@ -30,6 +30,7 @@ Object.assign(App.prototype, {
         div.innerHTML = `
             ${this.getHUD()}
             <div class="game-card">
+                ${this.getBackButton('word-menu')}
                 <h2 style="color: #4A90E2; margin-bottom: 10px;">${this.state.user?.name}, stava:</h2>
                 <div style="font-size: 6rem; margin-bottom: 2rem;">${emoji}</div>
                 <div id="word-display" style="font-size: 3rem; letter-spacing: 15px; margin-bottom: 2rem; color: #4A5568;">

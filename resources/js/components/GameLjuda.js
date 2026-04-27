@@ -4,6 +4,7 @@ Object.assign(App.prototype, {
         div.innerHTML = `
             ${this.getHUD()}
             <div id="ljuda-container" style="position: relative; width: 800px; height: 500px; margin: 0 auto; background: #1A202C; border-radius: 30px; overflow: hidden; border: 5px solid #3498DB; box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+                ${this.getBackButton('word-menu')}
                 
                 <div style="position: absolute; top: 40px; text-align: center;">
                     <h2 style="color: #3498DB; margin-bottom: 10px;">Ljuda ord 🗣️</h2>

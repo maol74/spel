@@ -5,10 +5,12 @@ Object.assign(App.prototype, {
             ${this.getHUD()}
             <div class="game-card">
                 <h1 style="color: var(--color-story); font-style: italic;">Läs äventyr om dig, ${this.state.user?.name}!</h1>
+                <p style="color: #A0AEC0; margin-bottom: 20px;">Varje saga du läser ger dig <b>5 extra stjärnor</b>! ⭐⭐⭐⭐⭐</p>
                 ${CONFIG.stories.map((s, i) => `
-                    <div class="menu-card" style="border-color: #2D3748" onclick="window.gameApp.readStory(${i})">
+                    <div class="menu-card" style="border-color: #2D3748; position: relative;" onclick="window.gameApp.readStory(${i})">
                         <div class="menu-card-icon">${s.icon}</div>
                         <div class="menu-card-title" style="color: var(--color-story); font-size: 1.4rem;">${this.state.user?.name}s äventyr: ${s.title}</div>
+                        <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: #F1C40F; color: black; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 0.9rem;">+5 ⭐</div>
                     </div>
                 `).join('')}
                 <div style="margin-top: 40px;"><button class="menu-card" style="width: auto; padding: 10px 30px;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till Start</button></div>
@@ -45,6 +47,10 @@ Object.assign(App.prototype, {
                     </p>
                     <div style="font-size: 3rem; margin-top: 15px; clear: both; text-align: center;">${s.icon}</div>
                 </div>
+                
+                <div style="margin-top: 30px; border-top: 2px dashed rgba(255,255,255,0.1); padding-top: 30px;">
+                    <button class="btn btn-stava" style="width: 100%; font-size: 1.5rem; padding: 20px;" onclick="window.gameApp.completeStory()">Jag har läst klart! 🎉 (+5 ⭐)</button>
+                </div>
             </div>
         `;
 
@@ -54,6 +60,13 @@ Object.assign(App.prototype, {
             if (e.key === 'Escape') this.exitStory();
         };
         window.addEventListener('keydown', this._storyKeyHandler);
+    },
+
+    completeStory() {
+        this.addScore(5);
+        this.incrementProgress();
+        this.showToast('Superduktigt! Du har läst sagan och fått 5 stjärnor! 🌟📚✨');
+        this.exitStory();
     },
 
     setStoryWordIndex(index) {

@@ -3,33 +3,43 @@ Object.assign(App.prototype, {
         const div = this.screens['game-adventure'];
         div.innerHTML = `
             ${this.getHUD()}
-            <div style="position: relative; width: 800px; height: 400px; margin: 0 auto; background: #87CEEB; border-radius: 20px; overflow: hidden; border: 5px solid #2D3748; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
-                <canvas id="adventure-canvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
-                
-                <div id="adv-overlay" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; color: white;">
-                    <h1 id="adv-status-text" style="font-size: 3rem; margin-bottom: 20px;">GAME OVER</h1>
-                    <button class="menu-card" style="width: auto; padding: 15px 40px; font-size: 1.5rem;" onclick="window.gameApp.initAdventureGame()">Spela Igen! 🔄</button>
-                    <button class="menu-card" style="width: auto; padding: 10px 30px; margin-top: 20px; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till menyn 🏠</button>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 20px;">
+                <!-- SKJUT - LEFT -->
+                <button class="btn btn-skjut" 
+                        style="width: 120px; height: 120px; border-radius: 50%; font-size: 1.5rem; background: #E74C3C; box-shadow: 0 10px 0 #C0392B; transition: all 0.1s;" 
+                        onmousedown="window.gameApp.handleShoot()" ontouchstart="event.preventDefault(); window.gameApp.handleShoot()">SKJUT! 🔥</button>
+
+                <!-- GAME FRAME -->
+                <div style="position: relative; width: 800px; height: 400px; background: #87CEEB; border-radius: 20px; overflow: hidden; border: 5px solid #2D3748; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+                    <canvas id="adventure-canvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
+                    
+                    <div id="adv-overlay" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; color: white;">
+                        <h1 id="adv-status-text" style="font-size: 3rem; margin-bottom: 20px;">GAME OVER</h1>
+                        <button class="menu-card" style="width: auto; padding: 15px 40px; font-size: 1.5rem;" onclick="window.gameApp.initAdventureGame()">Spela Igen! 🔄</button>
+                        <button class="menu-card" style="width: auto; padding: 10px 30px; margin-top: 20px; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till menyn 🏠</button>
+                    </div>
+
+                    <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                        <div id="adv-lives" style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 1.2rem; letter-spacing: 5px;">
+                            ❤️❤️❤️
+                        </div>
+                        <div style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.9rem;">
+                            FART: <span id="adv-speed">0.0</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; color: white; font-weight: bold;">
+                            POÄNG: <span id="adv-score">0</span> / ${this.config.adventure.targetScore}
+                        </div>
+                    </div>
                 </div>
 
-                <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
-                    <div id="adv-lives" style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 1.2rem; letter-spacing: 5px;">
-                        ❤️❤️❤️
-                    </div>
-                    <div style="background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.9rem;">
-                        FART: <span id="adv-speed">0.0</span>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; color: white; font-weight: bold;">
-                        POÄNG: <span id="adv-score">0</span> / ${this.config.adventure.targetScore}
-                    </div>
-                </div>
-                <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #2D3748; font-weight: bold; font-size: 0.9rem;">
-                    Hoppa: Pil Upp | Skjut: Space
-                </div>
+                <!-- HOPPA - RIGHT -->
+                <button class="btn btn-hoppa" 
+                        style="width: 120px; height: 120px; border-radius: 50%; font-size: 1.5rem; background: #2ECC71; box-shadow: 0 10px 0 #27AE60; transition: all 0.1s;" 
+                        onmousedown="window.gameApp.handleJump()" ontouchstart="event.preventDefault(); window.gameApp.handleJump()">HOPPA! ⬆️</button>
             </div>
-            <div class="game-controls" style="display: flex; gap: 20px; width: 800px; margin: 20px auto; max-width: 95%;">
-                <button class="btn btn-hoppa" style="height: 100px; font-size: 2rem;" onmousedown="window.gameApp.handleJump()" ontouchstart="event.preventDefault(); window.gameApp.handleJump()">HOPPA! ⬆️</button>
-                <button class="btn btn-skjut" style="height: 100px; font-size: 2rem;" onmousedown="window.gameApp.handleShoot()" ontouchstart="event.preventDefault(); window.gameApp.handleShoot()">SKJUT! 🔥</button>
+            
+            <div style="text-align: center; margin-top: 20px; color: #718096; font-weight: bold;">
+                Hoppa: Pil Upp | Skjut: Space
             </div>
         `;
         // Stop any previous loop

@@ -147,6 +147,35 @@ Object.assign(App.prototype, {
         this.showScreen('main-menu');
     },
 
+    selectDifficultyQuick(id) {
+        this.state.difficulty = id;
+        this.saveState();
+        // Refresh current menu to show active state
+        const refreshMap = {
+            'spel-menu': 'updateSpelMenuScreen',
+            'letter-menu': 'updateLetterMenuScreen',
+            'word-menu': 'updateWordMenuScreen',
+            'math-menu': 'updateMathMenuScreen',
+            'penguin-menu': 'updatePenguinMenuScreen',
+            'feed-menu': 'updateFeedMenuScreen',
+            'dots-menu': 'updateDotsMenuScreen'
+        };
+        const method = refreshMap[this.state.currentScreen];
+        if (method && this[method]) this[method]();
+        
+        // Update HUD
+        const hudName = document.querySelector('.hud-name');
+        if (hudName) {
+            const hud = this.getHUD();
+            const temp = document.createElement('div');
+            temp.innerHTML = hud;
+            const newHud = temp.querySelector('.hud-bar');
+            if (newHud) document.querySelector('.hud-bar').replaceWith(newHud);
+        }
+        
+        this.showToast(`Svårighet: ${CONFIG.difficulties.find(d => d.id === id).name} ${CONFIG.difficulties.find(d => d.id === id).icon}`, 1000);
+    },
+
     updateMainMenuScreen() {
         const div = this.screens['main-menu'];
         const quests = this.state.dailyQuests || [];
@@ -388,11 +417,25 @@ Object.assign(App.prototype, {
                     const isUnlocked = g.price === 0 || this.state.purchasedItems.includes(g.id);
                     if (isUnlocked) {
                         return `
-                            <div class="menu-card" style="border-color: ${g.color}" onclick="window.gameApp.showScreen('${g.id}')">
-                                <div class="menu-card-icon">${g.icon}</div>
-                                <div class="menu-card-text">
-                                    <div class="menu-card-title" style="color: ${g.color}">${g.title}</div>
-                                    <div class="menu-card-subtitle">${g.subtitle}</div>
+                            <div class="menu-card" style="border-color: ${g.color}; flex-direction: column; align-items: stretch; padding: 15px;">
+                                <div onclick="window.gameApp.showScreen('${g.id}')" style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; cursor: pointer;">
+                                    <div class="menu-card-icon" style="margin: 0; font-size: 2.5rem;">${g.icon}</div>
+                                    <div class="menu-card-text" style="text-align: left;">
+                                        <div class="menu-card-title" style="color: ${g.color}; margin: 0;">${g.title}</div>
+                                        <div class="menu-card-subtitle" style="margin: 0;">${g.subtitle}</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 12px; margin-top: auto;">
+                                    ${CONFIG.difficulties.map(d => `
+                                        <button onclick="event.stopPropagation(); window.gameApp.selectDifficultyQuick(${d.id})" 
+                                                style="flex: 1; border: none; padding: 6px 2px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+                                                       background: ${this.state.difficulty === d.id ? d.color : 'transparent'};
+                                                       color: ${this.state.difficulty === d.id ? 'black' : '#A0AEC0'};
+                                                       border: 1px solid ${this.state.difficulty === d.id ? d.color : 'rgba(255,255,255,0.1)'};">
+                                            ${d.icon} ${d.name}
+                                        </button>
+                                    `).join('')}
                                 </div>
                             </div>
                         `;
@@ -400,11 +443,11 @@ Object.assign(App.prototype, {
                         return `
                             <div class="menu-card" style="border-color: #718096; position: relative;" onclick="window.gameApp.buyGame('${g.id}', '${g.title}', ${g.price})">
                                 <div class="menu-card-icon" style="filter: grayscale(100%) opacity(50%);">${g.icon}</div>
-                                <div class="menu-card-text" style="opacity: 0.6;">
+                                <div class="menu-card-text" style="filter: opacity(50%);">
                                     <div class="menu-card-title" style="color: white">${g.title}</div>
                                     <div class="menu-card-subtitle">Låst 🔒</div>
                                 </div>
-                                <div style="position: absolute; top: -10px; right: -10px; background: #F1C40F; color: black; padding: 5px 10px; border-radius: 15px; font-weight: bold; border: 2px solid white;">
+                                <div style="position: absolute; top: -10px; right: -10px; background: #F1C40F; color: black; padding: 5px 10px; border-radius: 15px; font-weight: bold; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
                                     ${g.price} ⭐
                                 </div>
                             </div>
@@ -417,60 +460,97 @@ Object.assign(App.prototype, {
 
     updateLetterMenuScreen() {
         const div = this.screens['letter-menu'];
+        const games = [
+            { id: 'game-hitta', icon: '🔍', title: 'Hitta Bokstaven', subtitle: 'Leta rätt på bokstaven!', color: 'var(--color-william)' },
+            { id: 'game-memory', icon: '🧠', title: 'Bokstavs-Memory', subtitle: 'Hitta par med bokstäver!', color: '#9B59B6' },
+            { id: 'game-rabbla', icon: '🗣️', title: 'Bokstav-Rabbla', subtitle: 'Säg bokstaven högt!', color: '#2ECC71' }
+        ];
+
         div.innerHTML = `
             ${this.getHUD()}
             <h1>Bokstäver 🔤</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Lär känna alla bokstäver!</p>
             <div class="menu-grid">
-                <div class="menu-card" style="border-color: var(--color-william)" onclick="window.gameApp.showScreen('game-hitta')">
-                    <div class="menu-card-icon">🔍</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: var(--color-william)">Hitta Bokstaven</div>
-                        <div class="menu-card-subtitle">Leta rätt på bokstaven!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #9B59B6" onclick="window.gameApp.showScreen('game-memory')">
-                    <div class="menu-card-icon">🧠</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #9B59B6">Bokstavs-Memory</div>
-                        <div class="menu-card-subtitle">Hitta par med bokstäver!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #2ECC71" onclick="window.gameApp.showScreen('game-rabbla')">
-                    <div class="menu-card-icon">🗣️</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #2ECC71">Bokstav-Rabbla</div>
-                        <div class="menu-card-subtitle">Säg bokstaven högt!</div>
-                    </div>
-                </div>
+                ${games.map(g => this.getQuickMenuCard(g)).join('')}
             </div>
             <div style="margin-top: 40px;"><button class="menu-card" style="width: auto; padding: 10px 30px;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till Start</button></div>
         `;
     },
 
+    getQuickMenuCard(g) {
+        return `
+            <div class="menu-card" style="border-color: ${g.color}; flex-direction: column; align-items: stretch; padding: 15px;">
+                <div onclick="window.gameApp.showScreen('${g.id}')" style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; cursor: pointer;">
+                    <div class="menu-card-icon" style="margin: 0; font-size: 2.5rem;">${g.icon}</div>
+                    <div class="menu-card-text" style="text-align: left;">
+                        <div class="menu-card-title" style="color: ${g.color}; margin: 0;">${g.title}</div>
+                        <div class="menu-card-subtitle" style="margin: 0;">${g.subtitle}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 12px; margin-top: auto;">
+                    ${CONFIG.difficulties.map(d => `
+                        <button onclick="event.stopPropagation(); window.gameApp.selectDifficultyQuick(${d.id})" 
+                                style="flex: 1; border: none; padding: 6px 2px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+                                       background: ${this.state.difficulty === d.id ? d.color : 'transparent'};
+                                       color: ${this.state.difficulty === d.id ? 'black' : '#A0AEC0'};
+                                       border: 1px solid ${this.state.difficulty === d.id ? d.color : 'rgba(255,255,255,0.1)'};">
+                            ${d.icon} ${d.name}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    },
+
     updateWordMenuScreen() {
         const div = this.screens['word-menu'];
+        const games = [
+            { id: 'game-stava', icon: '✏️', title: 'Stava Ordet', subtitle: 'Bygg ord!', color: 'var(--color-liam)' },
+            { id: 'game-rim', icon: '🏠', title: 'Rim-Stugan', subtitle: 'Hitta ord som rimmar!', color: '#FF6B6B' },
+            { id: 'game-ljuda', icon: '🗣️', title: 'Ljuda ord', subtitle: 'Läs högt!', color: '#3498DB' },
+            { id: 'game-mening', icon: '🏗️', title: 'Mening-Byggaren', subtitle: 'Bygg meningar!', color: '#2ECC71' },
+            { id: 'game-gomma', icon: '🕵️', title: 'Ord-Gömman', subtitle: 'Hitta gömda ord!', color: '#9B59B6' }
+        ];
+
         div.innerHTML = `
             ${this.getHUD()}
             <h1>Ord & Meningar ✏️</h1>
             <p style="color: #CBD5E0; margin-bottom: 2rem;">Lär dig bygga ord och meningar!</p>
             <div class="menu-grid">
-                <div class="menu-card" style="border-color: var(--color-liam)" onclick="window.gameApp.showScreen('game-stava')">
-                    <div class="menu-card-icon">✏️</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: var(--color-liam)">Stava Ordet</div>
-                        <div class="menu-card-subtitle">Bygg ord av bokstäver!</div>
-                    </div>
-                </div>
-                <div class="menu-card" style="border-color: #3498DB" onclick="window.gameApp.showScreen('game-ljuda')">
-                    <div class="menu-card-icon">🗣️</div>
-                    <div class="menu-card-text">
-                        <div class="menu-card-title" style="color: #3498DB">Ljuda ord</div>
-                        <div class="menu-card-subtitle">Läs och säg ordet högt!</div>
-                    </div>
-                </div>
+                ${games.map(g => this.getQuickMenuCard(g)).join('')}
             </div>
             <div style="margin-top: 40px;"><button class="menu-card" style="width: auto; padding: 10px 30px;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till Start</button></div>
+        `;
+    },
+
+    updateMathMenuScreen() {
+        const div = this.screens['math-menu'];
+        const games = [
+            { id: 'penguin-menu', icon: '🐧', title: 'Pingvinhopp', subtitle: 'Hoppa på isberg!', color: '#F1C40F' },
+            { id: 'feed-menu', icon: '🐒', title: 'Mata Djuren', subtitle: 'Räkna rätt mat!', color: '#E67E22' },
+            { id: 'game-vag', icon: '⚖️', title: 'Våg-Spelet', subtitle: 'Hitta jämvikt!', color: '#2ECC71' },
+            { id: 'game-monster', icon: '🌈', title: 'Mönster-Magikern', subtitle: 'Vad kommer näst?', color: '#9B59B6' },
+            { id: 'game-klocka', icon: '⏰', title: 'Klock-Kul', subtitle: 'Lär dig klockan!', color: '#FF6B6B' },
+            { id: 'dots-menu', icon: '✏️', title: 'Prick till Prick', subtitle: 'Rita figurer!', color: '#3498DB' }
+        ];
+
+        div.innerHTML = `
+            ${this.getHUD()}
+            <h1>Matte-Äventyr 🔢</h1>
+            <p style="color: #CBD5E0; margin-bottom: 2rem;">Välj ett mattespel!</p>
+            <div class="menu-grid">
+                ${games.map(g => this.getQuickMenuCard(g)).join('')}
+            </div>
+            <div style="margin-top: 40px;"><button class="menu-card" style="width: auto; padding: 10px 30px;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka till Start</button></div>
+        `;
+    },
+    getBackButton(target = 'main-menu') {
+        return `
+            <button onclick="window.gameApp.showScreen('${target}')" 
+                    style="position: absolute; top: 20px; left: 20px; z-index: 1000; background: rgba(45, 55, 72, 0.9); color: white; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.2s; border: 2px solid rgba(255,255,255,0.2); font-family: inherit;">
+                <span style="font-size: 1.2rem;">⬅️</span> Tillbaka
+            </button>
         `;
     }
 });
