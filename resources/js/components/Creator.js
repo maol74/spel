@@ -18,9 +18,11 @@ Object.assign(App.prototype, {
                         ${['#FF6B6B', '#4ECDC4', '#FFE66D', '#2ECC71', '#3498DB', '#9B59B6', '#FFFFFF', '#000000'].map(c => `
                             <div class="color-picker" style="width: 40px; height: 40px; background: ${c}; border-radius: 50%; border: 3px solid ${c === '#FFFFFF' ? '#CBD5E0' : 'transparent'}; cursor: pointer; margin: 0 auto;" onclick="window.gameApp.setPaintColor('${c}')"></div>
                         `).join('')}
-                        <div style="margin-top: 10px; border-top: 1px solid #4A5568; padding-top: 10px; text-align: center;">
-                            <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setPaintMode('brush')">🖌️</div>
-                            <div style="font-size: 1.5rem; cursor: pointer; margin-top: 10px;" onclick="window.gameApp.setPaintMode('sticker')">✨</div>
+                        <div style="margin-top: 10px; border-top: 1px solid #4A5568; padding-top: 10px; text-align: center; display: flex; flex-direction: column; gap: 15px;">
+                            <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setBrushType('pen')" title="Penna">✏️</div>
+                            <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setBrushType('brush')" title="Pensel">🖌️</div>
+                            <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setBrushType('marker')" title="Överstrykningspenna">🖍️</div>
+                            <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setPaintMode('sticker')" title="Klistermärken">✨</div>
                         </div>
                     </div>
 
@@ -62,6 +64,7 @@ Object.assign(App.prototype, {
         
         this.paintColor = '#FF6B6B';
         this.paintMode = 'brush';
+        this.brushType = 'brush';
         this.selectedSticker = null;
         this.isPainting = false;
         
@@ -71,11 +74,26 @@ Object.assign(App.prototype, {
             if (this.paintMode === 'brush') {
                 ctx.beginPath();
                 ctx.moveTo(pos.x, pos.y);
+                
+                // Set tool properties
                 ctx.strokeStyle = this.paintColor;
-                ctx.lineWidth = 10;
-                ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
+                
+                if (this.brushType === 'pen') {
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    ctx.globalAlpha = 1.0;
+                } else if (this.brushType === 'brush') {
+                    ctx.lineWidth = 15;
+                    ctx.lineCap = 'round';
+                    ctx.globalAlpha = 1.0;
+                } else if (this.brushType === 'marker') {
+                    ctx.lineWidth = 30;
+                    ctx.lineCap = 'square';
+                    ctx.globalAlpha = 0.4;
+                }
             } else if (this.paintMode === 'sticker' && this.selectedSticker) {
+                ctx.globalAlpha = 1.0;
                 ctx.font = '50px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
@@ -92,6 +110,9 @@ Object.assign(App.prototype, {
 
         const stopPaint = () => {
             this.isPainting = false;
+            // Reset alpha so it doesn't affect other things if we don't reset it
+            const canvas = document.getElementById('creator-canvas');
+            if (canvas) canvas.getContext('2d').globalAlpha = 1.0;
         };
 
         canvas.onmousedown = startPaint;
@@ -114,12 +135,19 @@ Object.assign(App.prototype, {
     setPaintColor(color) {
         this.paintColor = color;
         this.paintMode = 'brush';
-        this.showToast('Penselfärg ändrad! 🖌️');
+        this.showToast('Färg ändrad! 🎨');
     },
 
     setPaintMode(mode) {
         this.paintMode = mode;
         this.showToast(mode === 'brush' ? 'Måla fritt! 🖌️' : 'Välj ett klistermärke! ✨');
+    },
+
+    setBrushType(type) {
+        this.brushType = type;
+        this.paintMode = 'brush';
+        const names = { pen: 'Penna ✏️', brush: 'Pensel 🖌️', marker: 'Överstrykningspenna 🖍️' };
+        this.showToast(`Verktyg: ${names[type]}`);
     },
 
     selectSticker(icon) {
