@@ -76,6 +76,9 @@ Object.assign(App.prototype, {
                                 <button onclick="window.gameApp.resetDailyQuests()" style="padding: 10px 20px; border-radius: 10px; background: #F1C40F; color: #000; border: none; cursor: pointer; font-weight: bold;">
                                     🎯 Nollställ Dagens Uppdrag
                                 </button>
+                                <button onclick="window.gameApp.resetLuckyWheel()" style="padding: 10px 20px; border-radius: 10px; background: #F1C40F; color: #000; border: none; cursor: pointer; font-weight: bold;">
+                                    🎡 Nollställ Lyckohjulet
+                                </button>
                             </div>
                             <p style="color: #A0AEC0; font-size: 0.8rem; margin-top: 5px;">Detta återställer framsteg eller dagliga utmaningar.</p>
                         </div>
@@ -259,6 +262,15 @@ Object.assign(App.prototype, {
             this.saveState();
             this.generateDailyQuests(); // This will pick new random ones
             this.showToast('Dagens Uppdrag har nollställts! 🎯');
+            this.updateAdminScreen();
+        }
+    },
+
+    resetLuckyWheel() {
+        if (confirm('Vill du nollställa Lyckohjulet? Man kommer kunna snurra det igen direkt.')) {
+            this.state.lastSpinDate = null;
+            this.saveState();
+            this.showToast('Lyckohjulet har nollställts! 🎡');
             this.updateAdminScreen();
         }
     }
