@@ -4,7 +4,23 @@ Object.assign(App.prototype, {
         const levelWords = CONFIG.difficultyWords[this.state.difficulty] || CONFIG.difficultyWords[1];
         
         if (!this.currentWord) { 
-            this.currentWord = levelWords[Math.floor(Math.random() * levelWords.length)]; 
+            if (!this._stavaHistory) this._stavaHistory = [];
+            
+            // Filter words that are not in the last 6 used
+            let available = levelWords.filter(w => !this._stavaHistory.includes(w));
+            
+            // Safety: if too many words are in history or pool is small
+            if (available.length === 0) {
+                this._stavaHistory = [];
+                available = levelWords;
+            }
+            
+            this.currentWord = available[Math.floor(Math.random() * available.length)]; 
+            
+            // Update history
+            this._stavaHistory.push(this.currentWord);
+            if (this._stavaHistory.length > 6) this._stavaHistory.shift();
+            
             this.currentGuessedCount = 0;
             this.currentWordPool = this.generateWordPool(this.currentWord);
         }
