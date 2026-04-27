@@ -69,10 +69,15 @@ Object.assign(App.prototype, {
                         </div>
                         <div style="grid-column: 1 / -1; margin-top: 10px; padding-top: 20px; border-top: 1px solid #2D3748;">
                             <label style="display: block; color: #E74C3C; margin-bottom: 10px; font-weight: bold;">Farlig zon</label>
-                            <button onclick="window.gameApp.resetAllData()" style="padding: 10px 20px; border-radius: 10px; background: #E74C3C; color: white; border: none; cursor: pointer; font-weight: bold;">
-                                ⚠️ Nollställ alla poäng och köp
-                            </button>
-                            <p style="color: #A0AEC0; font-size: 0.8rem; margin-top: 5px;">Detta tar bort alla stjärnor, återställer nivån till 1, och låser alla spel och avatars igen.</p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button onclick="window.gameApp.resetAllData()" style="padding: 10px 20px; border-radius: 10px; background: #E74C3C; color: white; border: none; cursor: pointer; font-weight: bold;">
+                                    ⚠️ Nollställ poäng & köp
+                                </button>
+                                <button onclick="window.gameApp.resetDailyQuests()" style="padding: 10px 20px; border-radius: 10px; background: #F1C40F; color: #000; border: none; cursor: pointer; font-weight: bold;">
+                                    🎯 Nollställ Dagens Uppdrag
+                                </button>
+                            </div>
+                            <p style="color: #A0AEC0; font-size: 0.8rem; margin-top: 5px;">Detta återställer framsteg eller dagliga utmaningar.</p>
                         </div>
                     </div>
                 </div>
@@ -244,6 +249,17 @@ Object.assign(App.prototype, {
             
             // Reload page to ensure all UI elements refresh cleanly
             location.reload();
+        }
+    },
+
+    resetDailyQuests() {
+        if (confirm('Vill du nollställa dagens uppdrag? Det kommer att genereras nya uppdrag direkt.')) {
+            this.state.dailyQuests = [];
+            this.state.lastQuestDate = null;
+            this.saveState();
+            this.generateDailyQuests(); // This will pick new random ones
+            this.showToast('Dagens Uppdrag har nollställts! 🎯');
+            this.updateAdminScreen();
         }
     }
 });
