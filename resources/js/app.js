@@ -136,6 +136,7 @@ class App {
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
             'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen',
             'profile-screen', 'wheel-screen', 'creator-screen',
+            'game-fishing', 'game-maze', 'game-train', 'game-tracing',
             'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
         ];
         ids.forEach(id => {
@@ -180,6 +181,10 @@ class App {
                 'game-forsta': 'letter-menu',
                 'game-vokal': 'letter-menu',
                 'game-mala': 'letter-menu',
+                'game-fishing': 'letter-menu',
+                'game-maze': 'letter-menu',
+                'game-train': 'letter-menu',
+                'game-tracing': 'letter-menu',
                 'game-vag': 'math-menu',
                 'game-monster': 'math-menu',
                 'game-klocka': 'math-menu',
@@ -249,6 +254,7 @@ class App {
             const gameScreens = [
                 'game-stava', 'game-hitta', 'game-adventure', 'game-math-penguin', 'game-math-feed', 'game-math-dots', 
                 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-memory',
+                'game-fishing', 'game-maze', 'game-train', 'game-tracing',
                 'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
             ];
             if (gameScreens.includes(screenId)) {
@@ -337,6 +343,10 @@ class App {
             if (screenId === 'game-mala' && this.initMalaGame) this.initMalaGame();
             if (screenId === 'game-rabbla' && this.initGameRabbla) this.initGameRabbla();
             if (screenId === 'game-ljuda' && this.initGameLjuda) this.initGameLjuda();
+            if (screenId === 'game-fishing' && this.initFishingGame) this.initFishingGame();
+            if (screenId === 'game-maze' && this.initMazeGame) this.initMazeGame();
+            if (screenId === 'game-train' && this.initTrainGame) this.initTrainGame();
+            if (screenId === 'game-tracing' && this.initTracingGame) this.initTracingGame();
             if (screenId === 'game-mening' && this.initMeningGame) this.initMeningGame();
             if (screenId === 'game-gomma' && this.initGommaGame) this.initGommaGame();
             if (screenId === 'game-rim' && this.initRimGame) this.initRimGame();

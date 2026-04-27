@@ -62,84 +62,68 @@ Object.assign(App.prototype, {
     spinWheel() {
         if (!this.checkCanSpin()) return;
         
-        const wheel = document.getElementById('wheel-rotator');
+        const rotator = document.getElementById('wheel-rotator');
         const controls = document.getElementById('wheel-controls');
-        if (!wheel || !controls) return;
+        if (!rotator || !controls) return;
         
+        // Disable controls during spin
         controls.innerHTML = '<div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; animation: pulse 1s infinite;">Snurrar... 🍀</div>';
         
         const segments = [10, 20, 50, 10, 150, 25, 10, 50];
         const randomIndex = Math.floor(Math.random() * segments.length);
         const prize = segments[randomIndex];
         
-        const targetRotation = 3600 + (360 - (randomIndex * 45));
+        // Use CSS transitions for truly smooth and random stop
+        // Random number of full spins (5-10) plus the segment offset
+        const fullSpins = 5 + Math.floor(Math.random() * 5);
+        const targetRotation = (fullSpins * 360) + (randomIndex * 45);
         
-        let currentRotation = 0;
-        let speed = 40; 
-        let lastTime = 0;
+        rotator.style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.15, 1)';
+        rotator.style.transform = `rotate(${targetRotation}deg)`;
         
-        const animate = (time) => {
-            if (!lastTime) lastTime = time;
-            const dt = Math.min((time - lastTime) / 16.66, 2); 
-            lastTime = time;
+        // Special effect: expand avatars during spin
+        const baseRadius = 20;
+        const expandedRadius = 60;
+        for (let i = 0; i < 8; i++) {
+            const avatar = document.getElementById(`wheel-avatar-${i}`);
+            if (avatar) {
+                avatar.style.transition = 'all 2s ease-out';
+                const angle = (i + 0.5) * Math.PI / 4;
+                const x = 50 + expandedRadius * Math.cos(angle);
+                const y = 50 + expandedRadius * Math.sin(angle);
+                avatar.setAttribute('x', x);
+                avatar.setAttribute('y', y);
+                avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
+            }
+        }
 
-            const rotatorEl = document.getElementById('wheel-rotator');
-            if (!rotatorEl || this.state.currentScreen !== 'wheel-screen') return;
-            
-            speed *= 0.992;
-            currentRotation += speed * dt;
-            
-            const extraRadius = Math.min(speed * 3.0, 100); 
-            const baseRadius = 20;
-            const currentRadius = baseRadius + extraRadius;
-
+        setTimeout(() => {
+            // Reset avatars to base position
             for (let i = 0; i < 8; i++) {
                 const avatar = document.getElementById(`wheel-avatar-${i}`);
                 if (avatar) {
+                    avatar.style.transition = 'all 1s ease-in';
                     const angle = (i + 0.5) * Math.PI / 4;
-                    const x = 50 + currentRadius * Math.cos(angle);
-                    const y = 50 + currentRadius * Math.sin(angle);
+                    const x = 50 + baseRadius * Math.cos(angle);
+                    const y = 50 + baseRadius * Math.sin(angle);
                     avatar.setAttribute('x', x);
                     avatar.setAttribute('y', y);
                     avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
                 }
             }
 
-            rotatorEl.style.transform = `rotate(${currentRotation}deg)`;
+            this.state.lastSpinDate = new Date().toDateString();
+            this.addScore(prize);
+            this.saveState();
             
-            if (speed > 0.15) {
-                requestAnimationFrame(animate);
-            } else {
-                currentRotation = targetRotation;
-                rotatorEl.style.transform = `rotate(${currentRotation}deg)`;
-
-                this.state.lastSpinDate = new Date().toDateString();
-                this.addScore(prize);
-                this.saveState();
-                
-                controls.innerHTML = `
-                    <div style="animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center;">
-                        <div style="font-size: 3rem; margin-bottom: 10px;">🎉 WOOHOO! 🎉</div>
-                        <div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; margin-bottom: 20px;">Du vann ${prize} stjärnor!</div>
-                        <button class="menu-card" style="width: auto; padding: 10px 40px;" onclick="window.gameApp.showScreen('main-menu')">Tack! 🏠</button>
-                    </div>
-                `;
-                this.showToast(`GRATTIS! +${prize} ⭐`, 3000);
-
-                for (let i = 0; i < 8; i++) {
-                    const avatar = document.getElementById(`wheel-avatar-${i}`);
-                    if (avatar) {
-                        const angle = (i + 0.5) * Math.PI / 4;
-                        const x = 50 + baseRadius * Math.cos(angle);
-                        const y = 50 + baseRadius * Math.sin(angle);
-                        avatar.setAttribute('x', x);
-                        avatar.setAttribute('y', y);
-                        avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
-                    }
-                }
-            }
-        };
-        
-        requestAnimationFrame(animate);
+            controls.innerHTML = `
+                <div style="animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🎉 WOOHOO! 🎉</div>
+                    <div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; margin-bottom: 20px;">Du vann ${prize} stjärnor!</div>
+                    <button class="menu-card" style="width: auto; padding: 10px 40px;" onclick="window.gameApp.showScreen('main-menu')">Tack! 🏠</button>
+                </div>
+            `;
+            this.showToast(`GRATTIS! +${prize} ⭐`, 3000);
+        }, 5100);
     }
 });

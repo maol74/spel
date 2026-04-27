@@ -462,8 +462,12 @@ Object.assign(App.prototype, {
         const div = this.screens['letter-menu'];
         const games = [
             { id: 'game-hitta', icon: '🔍', title: 'Hitta Bokstaven', subtitle: 'Leta rätt på bokstaven!', color: 'var(--color-william)' },
-            { id: 'game-memory', icon: '🧠', title: 'Bokstavs-Memory', subtitle: 'Hitta par med bokstäver!', color: '#9B59B6' },
-            { id: 'game-rabbla', icon: '🗣️', title: 'Bokstav-Rabbla', subtitle: 'Säg bokstaven högt!', color: '#2ECC71' }
+            { id: 'game-memory', icon: '🧠', title: 'Bokstavs-Memory', subtitle: 'Hitta par!', color: '#9B59B6' },
+            { id: 'game-tracing', icon: '✍️', title: 'Bokstavs-Spåraren', subtitle: 'Lär dig skriva!', color: '#AB47BC' },
+            { id: 'game-maze', icon: '🌀', title: 'Bokstavs-Labyrinten', subtitle: 'Hitta utgången!', color: '#F1C40F' },
+            { id: 'game-train', icon: '🚂', title: 'Bokstavs-Tåget', subtitle: 'Vilken saknas?', color: '#0288D1' },
+            { id: 'game-fishing', icon: '🎣', title: 'Bokstavs-Fisket', subtitle: 'Fånga rätt fisk!', color: '#2ECC71' },
+            { id: 'game-rabbla', icon: '🗣️', title: 'Bokstav-Rabbla', subtitle: 'Säg bokstaven!', color: '#E67E22' }
         ];
 
         div.innerHTML = `
