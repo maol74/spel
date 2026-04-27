@@ -55,6 +55,7 @@ class App {
                 this.state.purchasedItems = [];
             }
         }
+        this.state.currentScreen = 'loading-screen';
     }
 
     incrementProgress() {
@@ -104,7 +105,6 @@ class App {
 
     init() {
         console.log("Spel-Grabbarna v2.0 - Modulär arkitektur");
-        window.location.hash = '';
         this.appEl = document.getElementById('app');
         this.loadScreens();
         window.addEventListener('keydown', (e) => this.handleGlobalKeyDown(e));
@@ -194,7 +194,13 @@ class App {
         if (screen) {
             screen.classList.remove('hidden');
             this.state.currentScreen = screenId;
-            if (updateHash) window.location.hash = screenId;
+            if (updateHash) {
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, null, '#' + screenId);
+                } else {
+                    window.location.hash = screenId;
+                }
+            }
 
             const gameScreens = ['game-stava', 'game-hitta', 'game-adventure', 'game-math-penguin', 'game-math-feed', 'game-math-dots', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-memory'];
             if (gameScreens.includes(screenId)) {
