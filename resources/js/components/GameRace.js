@@ -3,7 +3,9 @@ Object.assign(App.prototype, {
         const div = this.screens['game-race'];
         div.innerHTML = `
             ${this.getHUD()}
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 900px; margin: 0 auto; padding-top: 20px;">
+                <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center; margin: 0;" onmousedown="window.gameApp.moveRacePlayer(-40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(-40)">⬅️</button>
+
                 <div id="race-container" style="position: relative; width: 400px; height: 600px; background: #333; border: 10px solid #555; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
                     <div class="road-lines" style="position: absolute; width: 100%; height: 200%; top: -100%; background: repeating-linear-gradient(to bottom, transparent, transparent 50px, rgba(255,255,255,0.2) 50px, rgba(255,255,255,0.2) 100px); animation: roadScroll 0.5s linear infinite;"></div>
                     
@@ -34,12 +36,10 @@ Object.assign(App.prototype, {
                     </div>
                     <div id="race-area" style="width: 100%; height: 100%;"></div>
                 </div>
-                <div style="display: flex; gap: 40px; margin-top: 10px;">
-                    <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center;" onmousedown="window.gameApp.moveRacePlayer(-40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(-40)">⬅️</button>
-                    <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center;" onmousedown="window.gameApp.moveRacePlayer(40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(40)">➡️</button>
-                </div>
-                <div style="color: #CBD5E0; font-weight: bold;">Använd pilarna eller piltangenterna för att köra! 🏎️💨</div>
+
+                <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center; margin: 0;" onmousedown="window.gameApp.moveRacePlayer(40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(40)">➡️</button>
             </div>
+            <div style="text-align: center; margin-top: 20px; color: #CBD5E0; font-weight: bold;">Använd pilarna eller piltangenterna för att köra! 🏎️💨</div>
             <style>
                 @keyframes roadScroll {
                     from { transform: translateY(0); }
