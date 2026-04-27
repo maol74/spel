@@ -413,12 +413,12 @@ class App {
         if (this.state.lastQuestDate === today && this.state.dailyQuests.length > 0) return;
 
         const pool = [
-            { id: 'spin', text: 'Snurra Lyckohjulet 🎡', reward: 50 },
-            { id: 'draw', text: 'Rita i Skaparlådan 🎨', reward: 30 },
-            { id: 'pop', text: 'Poppa 10 ballonger 🎈', reward: 40 },
-            { id: 'story', text: 'Läs en saga 📖', reward: 30 },
-            { id: 'shop', text: 'Besök butiken 🛒', reward: 10 },
-            { id: 'stars', text: 'Samla 100 stjärnor ⭐', reward: 60 }
+            { id: 'math', text: 'Räkna med djuren 🔢', reward: 50 },
+            { id: 'spell', text: 'Stava ett ord rätt ✏️', reward: 40 },
+            { id: 'story', text: 'Läs en hel saga 📖', reward: 50 },
+            { id: 'letters', text: 'Hitta 10 bokstäver 🔤', reward: 30 },
+            { id: 'draw', text: 'Skapa ett konstverk 🎨', reward: 30 },
+            { id: 'spin', text: 'Snurra Lyckohjulet 🎡', reward: 20 }
         ];
 
         // Pick 3 random
