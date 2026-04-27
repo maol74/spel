@@ -28,9 +28,10 @@ Object.assign(App.prototype, {
                         `).join('')}
                     </svg>
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: white; border-radius: 50%; border: 4px solid #F1C40F; box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 5; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">⭐</div>
+                    
+                    <!-- Red Pointer Arrow -->
+                    <div style="position: absolute; top: 290px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #E74C3C; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));"></div>
                 </div>
-                
-                <div style="position: absolute; top: 120px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #E74C3C; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));"></div>
 
                 <div id="wheel-controls">
                     ${canSpin ? `
