@@ -177,6 +177,15 @@ class App {
     }
 
     showScreen(screenId, updateHash = true) {
+        if (screenId === 'admin-menu') {
+            const pass = prompt("Ange administratörslösenord (4 siffror):");
+            if (pass !== '7851') {
+                this.showToast("Fel lösenord! Endast för vuxna. 🛑", 3000);
+                window.location.hash = this._lastScreen || 'main-menu';
+                return;
+            }
+        }
+
         Object.keys(this.screens).forEach(id => {
             if (this.screens[id]) this.screens[id].classList.add('hidden');
         });
