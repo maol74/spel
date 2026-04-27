@@ -29,7 +29,11 @@ const CONFIG = {
         { id: 1, name: 'Jättelätt', icon: '🌱', color: '#27AE60' },
         { id: 2, name: 'Lätt', icon: '☀️', color: '#4A90E2' },
         { id: 3, name: 'Lagom', icon: '⭐', color: '#F1C40F' },
-        { id: 4,        {
+        { id: 4, name: 'Svårt', icon: '🔥', color: '#E67E22' },
+        { id: 5, name: 'Expert!', icon: '🏆', color: '#E74C3C' }
+    ],
+    stories: [
+        {
             icon: '🐲',
             title: 'Den magiska drakön',
             img: 'resources/images/dragon_island_story_1777103636685.png',
