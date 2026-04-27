@@ -3,7 +3,7 @@ Object.assign(App.prototype, {
         const div = this.screens['game-pop'];
         div.innerHTML = `
             ${this.getHUD()}
-            <div id="pop-container" style="position: relative; width: 800px; height: 500px; margin: 0 auto; background: linear-gradient(to bottom, #87CEEB, #E0F7FA); border-radius: 30px; overflow: hidden; border: 5px solid #4DD0E1; cursor: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" style=\"font-size:32px\"><text y=\"32\">🔫</text></svg>') 16 16, crosshair; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+            <div id="pop-container" style="position: relative; width: 800px; height: 500px; margin: 0 auto; background: linear-gradient(to bottom, #87CEEB, #E0F7FA); border-radius: 30px; overflow: hidden; border: 5px solid #4DD0E1; cursor: url('data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'48\\' style=\\'font-size:32px\\'><text y=\\'32\\'>🔫</text></svg>') 16 16, crosshair; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
                 
                 <div id="pop-overlay" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; color: white; cursor: default;">
                     <h1 id="pop-status-text" style="font-size: 3rem; margin-bottom: 20px;">GAME OVER</h1>
