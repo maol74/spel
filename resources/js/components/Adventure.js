@@ -27,6 +27,10 @@ Object.assign(App.prototype, {
                     Hoppa: Pil Upp | Skjut: Space
                 </div>
             </div>
+            <div class="game-controls" style="display: flex; gap: 20px; width: 800px; margin: 20px auto; max-width: 95%;">
+                <button class="btn btn-hoppa" style="height: 100px; font-size: 2rem;" onmousedown="window.gameApp.handleJump()" ontouchstart="event.preventDefault(); window.gameApp.handleJump()">HOPPA! ⬆️</button>
+                <button class="btn btn-skjut" style="height: 100px; font-size: 2rem;" onmousedown="window.gameApp.handleShoot()" ontouchstart="event.preventDefault(); window.gameApp.handleShoot()">SKJUT! 🔥</button>
+            </div>
         `;
         // Stop any previous loop
         if (this.adventureLoopId) {

@@ -39,6 +39,9 @@ Object.assign(App.prototype, {
                 .bullet { position: absolute; width: 6px; height: 20px; background: #FFEB3B; border-radius: 3px; box-shadow: 0 0 10px #FFEB3B, 0 0 20px #F44336; z-index: 12; }
                 .alien { position: absolute; font-size: 2.5rem; z-index: 11; transition: transform 0.1s; }
             </style>
+            <div class="game-controls" style="display: flex; gap: 20px; width: 600px; margin: 20px auto; max-width: 95%;">
+                <button class="btn btn-skjut" style="height: 100px; font-size: 2rem;" onmousedown="window.gameApp.shootSpace()" ontouchstart="event.preventDefault(); window.gameApp.shootSpace()">SKJUT! 🔥</button>
+            </div>
         `;
         
         this.spaceActive = true;

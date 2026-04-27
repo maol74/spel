@@ -35,8 +35,8 @@ Object.assign(App.prototype, {
                     <div id="race-area" style="width: 100%; height: 100%;"></div>
                 </div>
                 <div style="display: flex; gap: 40px; margin-top: 10px;">
-                    <button class="menu-card" style="width: 100px; height: 100px; border-radius: 50%;" onmousedown="window.gameApp.moveRacePlayer(-40)" ontouchstart="window.gameApp.moveRacePlayer(-40)">⬅️</button>
-                    <button class="menu-card" style="width: 100px; height: 100px; border-radius: 50%;" onmousedown="window.gameApp.moveRacePlayer(40)" ontouchstart="window.gameApp.moveRacePlayer(40)">➡️</button>
+                    <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center;" onmousedown="window.gameApp.moveRacePlayer(-40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(-40)">⬅️</button>
+                    <button class="menu-card" style="width: 120px; height: 120px; border-radius: 50%; font-size: 3rem; display: flex; justify-content: center; align-items: center;" onmousedown="window.gameApp.moveRacePlayer(40)" ontouchstart="event.preventDefault(); window.gameApp.moveRacePlayer(40)">➡️</button>
                 </div>
                 <div style="color: #CBD5E0; font-weight: bold;">Använd pilarna eller piltangenterna för att köra! 🏎️💨</div>
             </div>
