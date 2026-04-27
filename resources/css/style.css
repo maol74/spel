@@ -405,3 +405,8 @@ h1 {
     from { transform: translate(-50%, -50%) rotate(var(--start-rot, 0deg)); }
     to { transform: translate(-50%, -50%) rotate(calc(var(--start-rot, 0deg) + 360deg)); }
 }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}

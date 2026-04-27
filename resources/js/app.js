@@ -130,7 +130,7 @@ class App {
             'main-menu', 'game-stava', 'game-hitta', 'game-adventure', 
             'math-menu', 'game-math-penguin', 'game-math-feed', 
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
-            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop'
+            'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen'
         ];
         ids.forEach(id => {
             this.screens[id] = document.getElementById(id);
@@ -140,7 +140,7 @@ class App {
     handleHashChange() {
         const hash = window.location.hash.replace('#', '');
         if (hash && this.screens[hash]) {
-            if (!this.state.user && hash !== 'user-select' && hash !== 'loading-screen' && hash !== 'admin-menu') {
+            if (!this.state.user && hash !== 'user-select' && hash !== 'loading-screen' && hash !== 'admin-menu' && hash !== 'password-screen') {
                 this.showScreen('user-select');
                 return;
             }
@@ -169,7 +169,8 @@ class App {
                 'game-rabbla': 'letter-menu',
                 'letter-menu': 'main-menu',
                 'word-menu': 'main-menu',
-                'game-adventure': 'main-menu'
+                'game-adventure': 'main-menu',
+                'password-screen': 'main-menu'
             };
             const target = backMap[this.state.currentScreen] || 'main-menu';
             this.showScreen(target);
@@ -177,13 +178,12 @@ class App {
     }
 
     showScreen(screenId, updateHash = true) {
-        if (screenId === 'admin-menu') {
-            const pass = prompt("Ange administratörslösenord (4 siffror):");
-            if (pass !== '7851') {
-                this.showToast("Fel lösenord! Endast för vuxna. 🛑", 3000);
-                window.location.hash = this._lastScreen || 'main-menu';
-                return;
-            }
+        if (screenId === this.state.currentScreen && !['password-screen'].includes(screenId)) return;
+
+        if (screenId === 'admin-menu' && !this._adminAuthenticated) {
+            this._targetAfterAuth = 'admin-menu';
+            this.showScreen('password-screen', false);
+            return;
         }
 
         Object.keys(this.screens).forEach(id => {
@@ -208,7 +208,8 @@ class App {
                 }
             }
             this._lastScreen = screenId;
-
+            
+            if (screenId === 'password-screen') this.renderPasswordScreen();
             if (screenId === 'admin-menu' && this.updateAdminScreen) {
                 this.tempConfig = JSON.parse(JSON.stringify(this.config));
                 this.updateAdminScreen();
@@ -257,6 +258,57 @@ class App {
             if (screenId === 'game-memory' && this.initGameMemory) this.initGameMemory();
             if (screenId === 'game-rabbla' && this.initGameRabbla) this.initGameRabbla();
             if (screenId === 'game-ljuda' && this.initGameLjuda) this.initGameLjuda();
+        }
+    }
+
+    renderPasswordScreen() {
+        const div = this.screens['password-screen'];
+        div.innerHTML = `
+            <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: var(--bg-color);">
+                <div class="game-card" style="max-width: 400px; padding: 40px; text-align: center; border: 4px solid var(--color-william); box-shadow: 0 0 50px rgba(74, 144, 226, 0.2);">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
+                    <h2 style="margin-bottom: 10px;">Endast vuxna</h2>
+                    <p style="color: #718096; margin-bottom: 30px;">Skriv in lösenordet för att komma till inställningar.</p>
+                    
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 30px;">
+                        <input type="password" id="admin-pass-input" maxlength="4" style="width: 200px; height: 60px; font-size: 2.5rem; text-align: center; border-radius: 15px; border: 3px solid #2D3748; background: #1A202C; color: white; letter-spacing: 10px;" autofocus>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; flex-direction: column;">
+                        <button class="menu-card" style="width: 100%; justify-content: center; background: var(--color-william); color: white;" onclick="window.gameApp.checkAdminPassword()">Öppna låset 🔓</button>
+                        <button class="menu-card" style="width: 100%; justify-content: center; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const input = document.getElementById('admin-pass-input');
+        if (input) {
+            input.focus();
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') this.checkAdminPassword();
+            };
+        }
+    }
+
+    checkAdminPassword() {
+        const input = document.getElementById('admin-pass-input');
+        if (!input) return;
+        
+        if (input.value === '7851') {
+            this._adminAuthenticated = true;
+            this.showScreen(this._targetAfterAuth || 'admin-menu');
+        } else {
+            this.showToast("Fel lösenord! 🛑", 2000);
+            input.value = '';
+            input.focus();
+            
+            // Shake effect
+            const card = input.closest('.game-card');
+            if (card) {
+                card.style.animation = 'shake 0.4s';
+                setTimeout(() => card.style.animation = '', 400);
+            }
         }
     }
 
