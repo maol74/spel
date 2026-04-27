@@ -22,7 +22,7 @@ Object.assign(App.prototype, {
                             </text>
                             <!-- Avatar Icon -->
                             <text x="${50 + 25 * Math.cos((i + 0.5) * Math.PI / 4)}" y="${50 + 25 * Math.sin((i + 0.5) * Math.PI / 4)}" 
-                                  font-size="8" text-anchor="middle" dominant-baseline="middle" transform="rotate(${(i + 0.5) * 45 + 90}, ${50 + 25 * Math.cos((i + 0.5) * Math.PI / 4)}, ${50 + 25 * Math.sin((i + 0.5) * Math.PI / 4)})">
+                                  font-size="24" text-anchor="middle" dominant-baseline="middle" transform="rotate(${(i + 0.5) * 45 + 90}, ${50 + 25 * Math.cos((i + 0.5) * Math.PI / 4)}, ${50 + 25 * Math.sin((i + 0.5) * Math.PI / 4)})">
                                 ${CONFIG.avatars[i % CONFIG.avatars.length].icon}
                             </text>
                         `).join('')}
