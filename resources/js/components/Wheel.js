@@ -21,7 +21,7 @@ Object.assign(App.prototype, {
                                 ${[10, 20, 50, 10, 150, 25, 10, 50][i]}
                             </text>
                             <!-- Avatar Icon -->
-                            <text x="${50 + 20 * Math.cos((i + 0.5) * Math.PI / 4)}" y="${50 + 20 * Math.sin((i + 0.5) * Math.PI / 4)}" 
+                            <text id="wheel-avatar-${i}" x="${50 + 20 * Math.cos((i + 0.5) * Math.PI / 4)}" y="${50 + 20 * Math.sin((i + 0.5) * Math.PI / 4)}" 
                                   font-size="15" text-anchor="middle" dominant-baseline="middle" transform="rotate(${(i + 0.5) * 45 + 90}, ${50 + 20 * Math.cos((i + 0.5) * Math.PI / 4)}, ${50 + 20 * Math.sin((i + 0.5) * Math.PI / 4)})">
                                 ${CONFIG.avatars[i % CONFIG.avatars.length].icon}
                             </text>
@@ -67,23 +67,60 @@ Object.assign(App.prototype, {
         const randomIndex = Math.floor(Math.random() * segments.length);
         const prize = segments[randomIndex];
         
-        const rotation = 3600 + (randomIndex * 45) + 22.5; // Multiple turns + offset to center of segment
-        wheel.style.transform = `rotate(${rotation}deg)`;
+        const targetRotation = 3600 + (randomIndex * 45) + 22.5;
+        let currentRotation = 0;
+        let speed = 25; // Starting speed
+        let lastTime = performance.now();
         
-        setTimeout(() => {
-            this.state.lastSpinDate = new Date().toDateString();
-            this.addScore(prize);
-            this.saveState();
+        const animate = (time) => {
+            if (!document.getElementById('wheel-container')) return;
             
-            controls.innerHTML = `
-                <div style="animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 10px;">🎉 WOOHOO! 🎉</div>
-                    <div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; margin-bottom: 20px;">Du vann ${prize} stjärnor!</div>
-                    <button class="menu-card" style="width: auto; padding: 10px 40px;" onclick="window.gameApp.showScreen('main-menu')">Tack! 🏠</button>
-                </div>
-            `;
+            const dt = (time - lastTime) / 16.66; // Delta time normalized
+            lastTime = time;
             
-            this.showToast(`GRATTIS! +${prize} ⭐`, 3000);
-        }, 4500);
+            // Decelerate
+            speed *= 0.985;
+            currentRotation += speed * dt;
+            
+            // Centrifugal force effect on avatars
+            const extraRadius = speed * 0.8; // Move out based on speed
+            const baseRadius = 20;
+            const currentRadius = baseRadius + extraRadius;
+
+            for (let i = 0; i < 8; i++) {
+                const avatar = document.getElementById(`wheel-avatar-${i}`);
+                if (avatar) {
+                    const angle = (i + 0.5) * Math.PI / 4;
+                    const x = 50 + currentRadius * Math.cos(angle);
+                    const y = 50 + currentRadius * Math.sin(angle);
+                    avatar.setAttribute('x', x);
+                    avatar.setAttribute('y', y);
+                    // Also update the rotation transform origin to keep them oriented
+                    avatar.setAttribute('transform', `rotate(${(i + 0.5) * 45 + 90}, ${x}, ${y})`);
+                }
+            }
+
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+            
+            if (speed > 0.1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Done!
+                this.state.lastSpinDate = new Date().toDateString();
+                this.addScore(prize);
+                this.saveState();
+                
+                controls.innerHTML = `
+                    <div style="animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🎉 WOOHOO! 🎉</div>
+                        <div style="font-size: 1.5rem; color: #F1C40F; font-weight: bold; margin-bottom: 20px;">Du vann ${prize} stjärnor!</div>
+                        <button class="menu-card" style="width: auto; padding: 10px 40px;" onclick="window.gameApp.showScreen('main-menu')">Tack! 🏠</button>
+                    </div>
+                `;
+                this.showToast(`GRATTIS! +${prize} ⭐`, 3000);
+            }
+        };
+        
+        requestAnimationFrame(animate);
     }
 });
