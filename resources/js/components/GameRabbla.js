@@ -50,6 +50,11 @@ Object.assign(App.prototype, {
     startRabbla() {
         if (this.rabblaInterval) clearInterval(this.rabblaInterval);
         this.rabblaInterval = setInterval(() => {
+            if (this.state.currentScreen !== 'game-rabbla') {
+                clearInterval(this.rabblaInterval);
+                window.removeEventListener('keydown', this._rabblaKeyHandler);
+                return;
+            }
             if (!this.rabblaActive) return;
             this.nextRabblaLetter();
         }, this.rabblaSpeed);
@@ -62,17 +67,17 @@ Object.assign(App.prototype, {
         const speedText = document.getElementById('rabbla-speed-text');
         if (speedText) speedText.innerText = (this.rabblaSpeed / 1000).toFixed(1);
         
-        if (this.rabblaActive) this.startRabbla();
+        if (this.rabblaActive && this.state.currentScreen === 'game-rabbla') this.startRabbla();
     },
 
     nextRabblaLetter() {
-        const letterEl = document.getElementById('rabbla-letter');
-        if (!letterEl) {
-            // Clean up if element is gone
+        if (this.state.currentScreen !== 'game-rabbla') {
             if (this.rabblaInterval) clearInterval(this.rabblaInterval);
             window.removeEventListener('keydown', this._rabblaKeyHandler);
             return;
         }
+        const letterEl = document.getElementById('rabbla-letter');
+        if (!letterEl) return;
         
         const randomLetter = this.rabblaLetters[Math.floor(Math.random() * this.rabblaLetters.length)];
         letterEl.innerText = randomLetter;
