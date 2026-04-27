@@ -285,8 +285,7 @@ class App {
                     </div>
 
                     <div style="display: flex; gap: 15px; flex-direction: column;">
-                        <button class="menu-card" style="width: 100%; justify-content: center; background: var(--color-william); color: white;" onclick="window.gameApp.checkAdminPassword()">Öppna låset 🔓</button>
-                        <button class="menu-card" style="width: 100%; justify-content: center; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('main-menu')">Tillbaka</button>
+                        <button class="menu-card" style="width: 100%; justify-content: center; background: #718096; border-color: #4A5568;" onclick="window.gameApp.showScreen('main-menu')">Avbryt</button>
                     </div>
                 </div>
             </div>
@@ -295,6 +294,11 @@ class App {
         const input = document.getElementById('admin-pass-input');
         if (input) {
             input.focus();
+            input.oninput = (e) => {
+                if (input.value.length === 4) {
+                    this.checkAdminPassword();
+                }
+            };
             input.onkeydown = (e) => {
                 if (e.key === 'Enter') this.checkAdminPassword();
             };
