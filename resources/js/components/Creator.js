@@ -24,6 +24,12 @@ Object.assign(App.prototype, {
                             <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setBrushType('marker')" title="Överstrykningspenna">🖍️</div>
                             <div style="font-size: 1.5rem; cursor: pointer;" onclick="window.gameApp.setPaintMode('sticker')" title="Klistermärken">✨</div>
                         </div>
+                        <div style="margin-top: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <div style="font-size: 0.7rem; color: #A0AEC0;">STORLEK</div>
+                            <input type="range" min="2" max="60" value="${this.brushSize || 15}" 
+                                   style="writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 20px; height: 100px;" 
+                                   oninput="window.gameApp.setBrushSize(this.value)">
+                        </div>
                     </div>
 
                     <!-- Canvas Area -->
@@ -65,6 +71,7 @@ Object.assign(App.prototype, {
         this.paintColor = '#FF6B6B';
         this.paintMode = 'brush';
         this.brushType = 'brush';
+        this.brushSize = this.brushSize || 15;
         this.selectedSticker = null;
         this.isPainting = false;
         
@@ -78,23 +85,21 @@ Object.assign(App.prototype, {
                 // Set tool properties
                 ctx.strokeStyle = this.paintColor;
                 ctx.lineJoin = 'round';
+                ctx.lineWidth = this.brushSize;
                 
                 if (this.brushType === 'pen') {
-                    ctx.lineWidth = 4;
                     ctx.lineCap = 'round';
                     ctx.globalAlpha = 1.0;
                 } else if (this.brushType === 'brush') {
-                    ctx.lineWidth = 15;
                     ctx.lineCap = 'round';
                     ctx.globalAlpha = 1.0;
                 } else if (this.brushType === 'marker') {
-                    ctx.lineWidth = 30;
                     ctx.lineCap = 'square';
                     ctx.globalAlpha = 0.4;
                 }
             } else if (this.paintMode === 'sticker' && this.selectedSticker) {
                 ctx.globalAlpha = 1.0;
-                ctx.font = '50px Arial';
+                ctx.font = `${this.brushSize * 4}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(this.selectedSticker, pos.x, pos.y);
@@ -148,6 +153,10 @@ Object.assign(App.prototype, {
         this.paintMode = 'brush';
         const names = { pen: 'Penna ✏️', brush: 'Pensel 🖌️', marker: 'Överstrykningspenna 🖍️' };
         this.showToast(`Verktyg: ${names[type]}`);
+    },
+
+    setBrushSize(size) {
+        this.brushSize = parseInt(size);
     },
 
     selectSticker(icon) {
