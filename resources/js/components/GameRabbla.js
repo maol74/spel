@@ -10,6 +10,9 @@ Object.assign(App.prototype, {
                     <p style="color: #A0AEC0;">Säg bokstaven högt när den dyker upp!</p>
                 </div>
 
+                <div id="rabbla-lists" style="position: absolute; right: 20px; top: 20px; width: 180px; display: flex; flex-direction: column; gap: 8px; z-index: 10;">
+                </div>
+
                 <div id="rabbla-letter" style="font-size: 15rem; font-weight: bold; color: white; text-shadow: 0 0 30px rgba(46, 204, 113, 0.5); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
                     ?
                 </div>
@@ -33,7 +36,17 @@ Object.assign(App.prototype, {
 
         this.rabblaActive = true;
         this.rabblaSpeed = 1800;
-        this.rabblaLetters = "abcdefghijklmnopqrstuvwxyzåäö".split("");
+        
+        try {
+            const saved = localStorage.getItem('rabblaLists');
+            this.rabblaLists = saved ? JSON.parse(saved) : ["b, d, p", "m, n", "c, s, z"];
+        } catch (e) {
+            this.rabblaLists = ["b, d, p", "m, n", "c, s, z"];
+        }
+        
+        this.activeRabblaListIndex = -1;
+        this.editingRabblaListIndex = -1;
+        this.updateRabblaLettersPool();
         
         // Keyboard support
         this._rabblaKeyHandler = (e) => {
@@ -45,6 +58,7 @@ Object.assign(App.prototype, {
         window.addEventListener('keydown', this._rabblaKeyHandler);
         
         this.startRabbla();
+        this.renderRabblaLists();
     },
 
     startRabbla() {
@@ -92,6 +106,85 @@ Object.assign(App.prototype, {
         }, 50);
         
         this.addScore(1);
+    },
+
+    renderRabblaLists() {
+        const container = document.getElementById('rabbla-lists');
+        if (!container) return;
+        container.innerHTML = '<h3 style="color: white; margin: 0 0 5px 0; font-size: 1rem; text-align: center;">Fokus (5x) Dbl-klick:</h3>';
+        
+        this.rabblaLists.forEach((listStr, idx) => {
+            const isActive = this.activeRabblaListIndex === idx;
+            const isEditing = this.editingRabblaListIndex === idx;
+            
+            const item = document.createElement('div');
+            item.style.cssText = `
+                background: ${isActive ? '#2ECC71' : '#2D3748'};
+                color: ${isActive ? '#1A202C' : 'white'};
+                padding: 10px;
+                border-radius: 8px;
+                border: 2px solid ${isActive ? '#27AE60' : '#4A5568'};
+                cursor: pointer;
+                font-weight: bold;
+                text-align: center;
+                user-select: none;
+                transition: all 0.2s;
+            `;
+            
+            if (isEditing) {
+                const input = document.createElement('input');
+                input.value = listStr;
+                input.style.cssText = "width: 100%; padding: 5px; box-sizing: border-box; background: white; color: black; border: none; border-radius: 4px; font-weight: bold; text-align: center;";
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        this.rabblaLists[idx] = input.value;
+                        localStorage.setItem('rabblaLists', JSON.stringify(this.rabblaLists));
+                        this.editingRabblaListIndex = -1;
+                        this.updateRabblaLettersPool();
+                        this.renderRabblaLists();
+                    }
+                };
+                input.onblur = () => {
+                    this.rabblaLists[idx] = input.value;
+                    localStorage.setItem('rabblaLists', JSON.stringify(this.rabblaLists));
+                    this.editingRabblaListIndex = -1;
+                    this.updateRabblaLettersPool();
+                    this.renderRabblaLists();
+                };
+                item.appendChild(input);
+                setTimeout(() => input.focus(), 10);
+            } else {
+                item.innerText = listStr || '(tom)';
+                item.onclick = () => {
+                    this.activeRabblaListIndex = isActive ? -1 : idx;
+                    this.updateRabblaLettersPool();
+                    this.renderRabblaLists();
+                };
+                item.ondblclick = () => {
+                    this.editingRabblaListIndex = idx;
+                    this.renderRabblaLists();
+                };
+            }
+            container.appendChild(item);
+        });
+    },
+
+    updateRabblaLettersPool() {
+        const base = "abcdefghijklmnopqrstuvwxyzåäö".split("");
+        let pool = [...base];
+        
+        if (this.activeRabblaListIndex !== -1) {
+            const listStr = this.rabblaLists[this.activeRabblaListIndex];
+            const focusedLetters = listStr.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length === 1 && base.includes(s));
+            
+            focusedLetters.forEach(char => {
+                for(let i = 0; i < 4; i++) {
+                    pool.push(char);
+                }
+            });
+        }
+        
+        this.rabblaLetters = pool;
     },
 
     toggleRabbla() {
