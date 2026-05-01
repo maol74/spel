@@ -35,7 +35,7 @@ Object.assign(App.prototype, {
         `;
 
         this.rabblaActive = true;
-        this.rabblaSpeed = 1800;
+        this.rabblaSpeed = parseInt(localStorage.getItem('rabblaSpeed')) || 1800;
         
         try {
             const saved = localStorage.getItem('rabblaLists');
@@ -59,6 +59,10 @@ Object.assign(App.prototype, {
         
         this.startRabbla();
         this.renderRabblaLists();
+
+        // Update speed text from loaded value
+        const speedText = document.getElementById('rabbla-speed-text');
+        if (speedText) speedText.innerText = (this.rabblaSpeed / 1000).toFixed(1);
     },
 
     startRabbla() {
@@ -78,6 +82,7 @@ Object.assign(App.prototype, {
 
     changeRabblaSpeed(delta) {
         this.rabblaSpeed = Math.max(200, Math.min(5000, this.rabblaSpeed + delta));
+        localStorage.setItem('rabblaSpeed', this.rabblaSpeed);
         const speedText = document.getElementById('rabbla-speed-text');
         if (speedText) speedText.innerText = (this.rabblaSpeed / 1000).toFixed(1);
         
