@@ -400,6 +400,7 @@ Object.assign(App.prototype, {
         const div = this.screens['spel-menu'];
         const games = [
             { id: 'game-pop', icon: '🎈', title: 'Ballongjakten', subtitle: 'Smäll alla ballonger!', color: '#FF6B6B', price: 0 },
+            { id: 'game-rocket', icon: '🚀', title: 'Bokstavs-Raketen', subtitle: 'Flyg till månen!', color: '#F1C40F', price: 0 },
             { id: 'game-adventure', icon: '⚡', title: 'Hjälte-Hoppet', subtitle: 'Hoppa & Skjut!', color: '#E67E22', price: 50 },
             { id: 'game-catch', icon: '🍎', title: 'Frukt-Frossa', subtitle: 'Fånga all frukt!', color: '#2ECC71', price: 100 },
             { id: 'game-race', icon: '🏎️', title: 'Racer-Robban', subtitle: 'Kör så det ryker!', color: '#3498DB', price: 150 },

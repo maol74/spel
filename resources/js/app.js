@@ -136,7 +136,7 @@ class App {
             'game-math-dots', 'dots-menu', 'penguin-menu', 'feed-menu', 
             'admin-menu', 'stories', 'spel-menu', 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'letter-menu', 'word-menu', 'game-memory', 'game-rabbla', 'game-ljuda', 'shop', 'password-screen',
             'profile-screen', 'wheel-screen', 'creator-screen',
-            'game-fishing', 'game-maze', 'game-train', 'game-tracing',
+            'game-fishing', 'game-maze', 'game-train', 'game-tracing', 'game-rocket',
             'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
         ];
         ids.forEach(id => {
@@ -254,7 +254,7 @@ class App {
             const gameScreens = [
                 'game-stava', 'game-hitta', 'game-adventure', 'game-math-penguin', 'game-math-feed', 'game-math-dots', 
                 'game-pop', 'game-catch', 'game-race', 'game-whack', 'game-space', 'game-bubble', 'game-memory',
-                'game-fishing', 'game-maze', 'game-train', 'game-tracing',
+                'game-fishing', 'game-maze', 'game-train', 'game-tracing', 'game-rocket',
                 'game-forsta', 'game-vokal', 'game-mala', 'game-rim', 'game-mening', 'game-gomma', 'game-vag', 'game-monster', 'game-klocka'
             ];
             if (gameScreens.includes(screenId)) {
@@ -347,6 +347,7 @@ class App {
             if (screenId === 'game-maze' && this.initMazeGame) this.initMazeGame();
             if (screenId === 'game-train' && this.initTrainGame) this.initTrainGame();
             if (screenId === 'game-tracing' && this.initTracingGame) this.initTracingGame();
+            if (screenId === 'game-rocket' && this.initRocketGame) this.initRocketGame();
             if (screenId === 'game-mening' && this.initMeningGame) this.initMeningGame();
             if (screenId === 'game-gomma' && this.initGommaGame) this.initGommaGame();
             if (screenId === 'game-rim' && this.initRimGame) this.initRimGame();
